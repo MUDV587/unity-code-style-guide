@@ -11,7 +11,7 @@ namespace UnityStarter.SceneTemplates.Authoring
     /// <summary>Temporary graphical acceptance probe; excluded from shipped starter resources.</summary>
     public sealed class CaptureSceneTemplates : MonoBehaviour
     {
-        private string m_output;
+        private string _output;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -27,15 +27,15 @@ namespace UnityStarter.SceneTemplates.Authoring
 
         private IEnumerator Start()
         {
-            m_output = Path.Combine(Application.persistentDataPath, "SceneTemplateCaptures");
+            _output = Path.Combine(Application.persistentDataPath, "SceneTemplateCaptures");
             string[] args = Environment.GetCommandLineArgs();
             int outputIndex = Array.IndexOf(args, "-sceneTemplateCaptures");
             if (outputIndex >= 0 && outputIndex + 1 < args.Length)
             {
-                m_output = args[outputIndex + 1];
+                _output = args[outputIndex + 1];
             }
 
-            Directory.CreateDirectory(m_output);
+            Directory.CreateDirectory(_output);
             foreach (string name in new[] { "StrategySandbox", "AssetLookDev", "UIPreview" })
             {
                 yield return SceneManager.LoadSceneAsync("Assets/Generated/" + name + "0.unity");
@@ -70,14 +70,14 @@ namespace UnityStarter.SceneTemplates.Authoring
                 }
             }
 
-            File.WriteAllText(m_output + "/complete.txt", "Three templates rendered; modal and 800x600 captured");
+            File.WriteAllText(_output + "/complete.txt", "Three templates rendered; modal and 800x600 captured");
             Application.Quit();
         }
 
         private void Save(string name)
         {
             var texture = ScreenCapture.CaptureScreenshotAsTexture();
-            File.WriteAllBytes(m_output + "/" + name + ".png", texture.EncodeToPNG());
+            File.WriteAllBytes(_output + "/" + name + ".png", texture.EncodeToPNG());
             Destroy(texture);
         }
     }

@@ -182,22 +182,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e448baf448e1a4f868479156d5091fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityStarter.SceneTemplates::UnityStarter.SceneTemplates.StrategyCameraController
-  m_pitchPivot: {fileID: 8737029699110422005}
-  m_lens: {fileID: 5324026139919585313}
-  m_inputDefinition: {fileID: -944628639613478452, guid: 3f5680884727240e1910dded77012e54, type: 3}
-  m_panSpeed: 25
-  m_sprintMultiplier: 3
-  m_rotationSpeed: 100
-  m_dragSensitivity: 0.15
-  m_zoomSensitivity: 8
-  m_smoothingTime: 0.12
-  m_minDistance: 12
-  m_maxDistance: 120
-  m_startDistance: 55
-  m_closePitch: 35
-  m_farPitch: 65
-  m_orthographicPitch: 45
-  m_isOrthographic: 0
+  _pitchPivot: {fileID: 8737029699110422005}
+  _lens: {fileID: 5324026139919585313}
+  _inputDefinition: {fileID: -944628639613478452, guid: 3f5680884727240e1910dded77012e54, type: 3}
+  _panSpeed: 25
+  _sprintMultiplier: 3
+  _rotationSpeed: 100
+  _dragSensitivity: 0.15
+  _zoomSensitivity: 8
+  _smoothingTime: 0.12
+  _minDistance: 12
+  _maxDistance: 120
+  _startDistance: 55
+  _closePitch: 35
+  _farPitch: 65
+  _orthographicPitch: 45
+  _isOrthographic: 0
 --- !u!1 &6202252910781380781
 GameObject:
   m_ObjectHideFlags: 0

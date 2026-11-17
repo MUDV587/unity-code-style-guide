@@ -12,16 +12,16 @@ namespace UnityStarter.SceneTemplates.Tests
     /// <summary>Exercises actual input, scene lifetimes, and modal behavior in the disposable consumer.</summary>
     public sealed class SceneTemplateRuntimeTests
     {
-        private Keyboard m_keyboard;
-        private InputSettings.BackgroundBehavior m_previousBackgroundBehavior;
-        private InputSettings.EditorInputBehaviorInPlayMode m_previousEditorBehavior;
+        private Keyboard _keyboard;
+        private InputSettings.BackgroundBehavior _previousBackgroundBehavior;
+        private InputSettings.EditorInputBehaviorInPlayMode _previousEditorBehavior;
 
         [SetUp]
         public void SetUp()
         {
             // A batch Editor has no focused Game view; restore both temporary choices in teardown.
-            m_previousBackgroundBehavior = InputSystem.settings.backgroundBehavior;
-            m_previousEditorBehavior = InputSystem.settings.editorInputBehaviorInPlayMode;
+            _previousBackgroundBehavior = InputSystem.settings.backgroundBehavior;
+            _previousEditorBehavior = InputSystem.settings.editorInputBehaviorInPlayMode;
             InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
         }
@@ -29,14 +29,14 @@ namespace UnityStarter.SceneTemplates.Tests
         [UnityTearDown]
         public IEnumerator TearDown()
         {
-            if (m_keyboard != null)
+            if (_keyboard != null)
             {
-                InputSystem.RemoveDevice(m_keyboard);
-                m_keyboard = null;
+                InputSystem.RemoveDevice(_keyboard);
+                _keyboard = null;
             }
 
-            InputSystem.settings.backgroundBehavior = m_previousBackgroundBehavior;
-            InputSystem.settings.editorInputBehaviorInPlayMode = m_previousEditorBehavior;
+            InputSystem.settings.backgroundBehavior = _previousBackgroundBehavior;
+            InputSystem.settings.editorInputBehaviorInPlayMode = _previousEditorBehavior;
 
             yield return SceneManager.LoadSceneAsync("Assets/Generated/UIPreview0.unity");
         }
@@ -49,9 +49,9 @@ namespace UnityStarter.SceneTemplates.Tests
             var second = Object.Instantiate(controller.gameObject);
             second.SetActive(false);
             controller.SendMessage("OnApplicationFocus", true);
-            m_keyboard = InputSystem.AddDevice<Keyboard>();
+            _keyboard = InputSystem.AddDevice<Keyboard>();
             Vector3 before = controller.transform.position;
-            InputSystem.QueueStateEvent(m_keyboard, new KeyboardState(Key.W));
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.W));
             yield return new WaitForSecondsRealtime(0.2f);
 
             Assert.That(Vector3.Distance(before, controller.transform.position), Is.GreaterThan(0.01f));
@@ -67,7 +67,7 @@ namespace UnityStarter.SceneTemplates.Tests
             controller.enabled = true;
             yield return null;
             Object.Destroy(second);
-            InputSystem.QueueStateEvent(m_keyboard, new KeyboardState());
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
             yield return null;
         }
 

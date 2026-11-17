@@ -1,5 +1,17 @@
 # Change log
 
+## 2026-11-17 — Fork: .NET Runtime naming standard
+
+- Restyled to the .NET Runtime team coding style: `_`camelCase private/internal instance fields, `s_`camelCase private/internal static fields (including static readonly), PascalCase constants at any accessibility (const implies static), PascalCase public/protected fields, `I`PascalCase interfaces, PascalCase local constants; Allman braces retained
+- `EditorConfig/.editorconfig` regenerated: rules ordered by Roslyn specificity (const,static > static > none), explicit `IDE1006 = warning`, `var` preferences aligned with the style (`var_for_built_in_types`/`var_when_type_is_apparent`/`var_elsewhere` all `true:suggestion`), expression-bodied single-line members preferred, max line length 140
+- `UnityStyleGuide.md` and `README.md` (rationale) updated with the new rules and member ordering (access level public → internal → protected → private; static before instance; fields `const` → `static readonly` → `static` → instance, `[SerializeField]` first; constructors after fields, before properties)
+- `check_naming.py`, `NamingFixture/{Good,Bad}.cs` updated; verified against SDK 10.0.302 Roslyn: good fixture 0 IDE1006 diagnostics, bad fixture six expected diagnostics at lines 1,2,5,6,7,8
+- Example code restyled: scene-template C# sources (`StrategyCameraController`, `PreviewScreen`, `AuthorSceneTemplates`, `CaptureSceneTemplates`, `SceneTemplateValidation`, tests), script templates (`Object Pool Handler`, `Awaitable Operation`, `UI Toolkit View`), and CI validator fixture (`CLEAN_PLAYER`)
+- Serialized scene asset patched to keep binding with the renamed `StrategyCameraController` fields (`StrategyCameraRig.prefab` — 16 field keys migrated, no GUIDs touched)
+- `ContinuousIntegration/README.md` example updated; historical replay evidence (`Tools/replay_results_*.json`) intentionally untouched
+- Added `scripts/sync-upstream.ps1` (ff-only main sync, layered merges into `Unity6000`/`Unity2022`)
+- This fork intentionally diverges from upstream on naming; sync conflicts are expected in the style-rename files
+
 ## 2026-10-26 — Fresh-agent discipline pressure tests
 
 - Ran five fresh sessions with withheld expected outcomes: 38 initial cases plus 16 corrective cases, all 54 matching independently reviewed decisions. Archived frozen sources, fixture inputs, response JSON and grades separately from Unity execution evidence.

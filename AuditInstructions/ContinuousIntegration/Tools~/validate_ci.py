@@ -41,7 +41,7 @@ namespace Game
 {
     public sealed class Player : MonoBehaviour
     {
-        private int m_health = 3;
+        private int _health = 3;
     }
 }
 """

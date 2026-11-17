@@ -15,11 +15,11 @@ namespace UnityStarter.SceneTemplates.Authoring
     /// <summary>Disposable-project authoring entry point. Creates new assets; refuses to overwrite templates.</summary>
     public sealed class AuthorSceneTemplates
     {
-        private const string k_root = "Assets/StarterSceneTemplates";
-        private Material m_ground;
-        private Material m_stone;
-        private Material m_accent;
-        private GameObject m_rig;
+        private const string Root = "Assets/StarterSceneTemplates";
+        private Material _ground;
+        private Material _stone;
+        private Material _accent;
+        private GameObject _rig;
 
         /// <summary>Creates all three templates and their explicitly scoped dependencies.</summary>
         public static void Create()
@@ -33,7 +33,7 @@ namespace UnityStarter.SceneTemplates.Authoring
             string project = Directory.GetParent(Application.dataPath).FullName;
             foreach (string name in new[] { "StrategySandbox", "UIPreview", "AssetLookDev" })
             {
-                string path = k_root + "/" + name + "/Preview.png";
+                string path = Root + "/" + name + "/Preview.png";
                 File.Copy(Path.Combine(project, "Captures", name + ".png"), path, true);
                 AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
                 var importer = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -42,14 +42,14 @@ namespace UnityStarter.SceneTemplates.Authoring
                 importer.mipmapEnabled = false;
                 importer.textureCompression = TextureImporterCompression.Uncompressed;
                 importer.SaveAndReimport();
-                var template = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(k_root + "/" + name + "/" + name + ".scenetemplate");
+                var template = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(Root + "/" + name + "/" + name + ".scenetemplate");
                 template.preview = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
                 EditorUtility.SetDirty(template);
             }
 
-            if (AssetDatabase.IsValidFolder(k_root + "/Shared/Lighting"))
+            if (AssetDatabase.IsValidFolder(Root + "/Shared/Lighting"))
             {
-                AssetDatabase.DeleteAsset(k_root + "/Shared/Lighting");
+                AssetDatabase.DeleteAsset(Root + "/Shared/Lighting");
             }
 
             AssetDatabase.SaveAssets();
@@ -57,18 +57,18 @@ namespace UnityStarter.SceneTemplates.Authoring
 
         private void CreateResources()
         {
-            if (AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(k_root + "/StrategySandbox/StrategySandbox.scenetemplate") != null)
+            if (AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(Root + "/StrategySandbox/StrategySandbox.scenetemplate") != null)
             {
                 throw new InvalidOperationException("Templates already exist. Use a fresh authoring project.");
             }
 
-            Folder(k_root + "/Shared/Materials");
-            Folder(k_root + "/StrategySandbox");
-            Folder(k_root + "/AssetLookDev");
+            Folder(Root + "/Shared/Materials");
+            Folder(Root + "/StrategySandbox");
+            Folder(Root + "/AssetLookDev");
             AssetDatabase.Refresh();
-            m_ground = Material("Ground", new Color(0.24f, 0.29f, 0.29f), 0.05f);
-            m_stone = Material("Stone", new Color(0.61f, 0.66f, 0.66f), 0.2f);
-            m_accent = Material("Accent", new Color(0.75f, 0.48f, 0.18f), 0.35f);
+            _ground = Material("Ground", new Color(0.24f, 0.29f, 0.29f), 0.05f);
+            _stone = Material("Stone", new Color(0.61f, 0.66f, 0.66f), 0.2f);
+            _accent = Material("Accent", new Color(0.75f, 0.48f, 0.18f), 0.35f);
             CreateInputAndRig();
             CreateWorld("StrategySandbox", false);
             CreateWorld("AssetLookDev", true);
@@ -96,7 +96,7 @@ namespace UnityStarter.SceneTemplates.Authoring
             sprint.AddBinding("<Keyboard>/rightShift");
             map.AddAction("ToggleProjection", InputActionType.Button, "<Keyboard>/tab");
             definition.name = "StrategyCameraActions";
-            string actionPath = k_root + "/Shared/Camera/StrategyCameraActions.inputactions";
+            string actionPath = Root + "/Shared/Camera/StrategyCameraActions.inputactions";
             File.WriteAllText(actionPath, definition.ToJson());
             UnityEngine.Object.DestroyImmediate(definition);
             AssetDatabase.ImportAsset(actionPath, ImportAssetOptions.ForceSynchronousImport);
@@ -119,24 +119,24 @@ namespace UnityStarter.SceneTemplates.Authoring
             camera.GetUniversalAdditionalCameraData().renderPostProcessing = true;
             var controller = rig.AddComponent<StrategyCameraController>();
             var serialized = new SerializedObject(controller);
-            serialized.FindProperty("m_pitchPivot").objectReferenceValue = pivot;
-            serialized.FindProperty("m_lens").objectReferenceValue = camera;
-            serialized.FindProperty("m_inputDefinition").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(actionPath);
+            serialized.FindProperty("_pitchPivot").objectReferenceValue = pivot;
+            serialized.FindProperty("_lens").objectReferenceValue = camera;
+            serialized.FindProperty("_inputDefinition").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(actionPath);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             rig.SetActive(true);
-            m_rig = PrefabUtility.SaveAsPrefabAsset(rig, k_root + "/Shared/Camera/StrategyCameraRig.prefab");
+            _rig = PrefabUtility.SaveAsPrefabAsset(rig, Root + "/Shared/Camera/StrategyCameraRig.prefab");
             UnityEngine.Object.DestroyImmediate(rig);
         }
 
         private void CreateWorld(string name, bool isLookDev)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            var rig = (GameObject)PrefabUtility.InstantiatePrefab(m_rig);
+            var rig = (GameObject)PrefabUtility.InstantiatePrefab(_rig);
             rig.transform.position = new Vector3(0f, 0f, 3f);
             rig.transform.rotation = Quaternion.Euler(0f, 25f, 0f);
             var world = new GameObject("World").transform;
             var ground = Primitive("Ground / 1 unit = 1 metre", PrimitiveType.Plane, world,
-                Vector3.zero, new Vector3(16f, 1f, 16f), m_ground);
+                Vector3.zero, new Vector3(16f, 1f, 16f), _ground);
             var content = new GameObject(isLookDev ? "DisplaySlots" : "Experiments").transform;
             content.SetParent(world, false);
             if (isLookDev)
@@ -148,9 +148,9 @@ namespace UnityStarter.SceneTemplates.Authoring
                     slot.SetParent(content, false);
                     slot.localPosition = new Vector3((i - 1) * 14f, 0f, 0f);
                     Primitive("Display plinth", PrimitiveType.Cube, slot, new Vector3(0f, 0.25f, 0f),
-                        new Vector3(11f, 0.5f, 11f), m_stone);
+                        new Vector3(11f, 0.5f, 11f), _stone);
                     Primitive("Replace with your asset", PrimitiveType.Cube, slot, new Vector3(0f, 2.5f, 0f),
-                        new Vector3(4f, 4f, 4f), i == 1 ? m_accent : m_stone);
+                        new Vector3(4f, 4f, 4f), i == 1 ? _accent : _stone);
                     Label(labels[i], slot, new Vector3(-4f, 0.55f, -4f));
                 }
 
@@ -159,22 +159,22 @@ namespace UnityStarter.SceneTemplates.Authoring
                 for (int i = 0; i < 3; i++)
                 {
                     Primitive("Material sample", PrimitiveType.Sphere, samples, new Vector3((i - 1) * 4f, 1f, -11f),
-                        Vector3.one * 2f, i == 0 ? m_ground : i == 1 ? m_stone : m_accent);
+                        Vector3.one * 2f, i == 0 ? _ground : i == 1 ? _stone : _accent);
                 }
             }
             else
             {
                 Primitive("Building scale / 6 x 4 x 6 m", PrimitiveType.Cube, content, new Vector3(0f, 2f, 0f),
-                    new Vector3(6f, 4f, 6f), m_accent);
+                    new Vector3(6f, 4f, 6f), _accent);
                 Primitive("Tower scale / 2 x 8 x 2 m", PrimitiveType.Cube, content, new Vector3(10f, 4f, 5f),
-                    new Vector3(2f, 8f, 2f), m_stone);
+                    new Vector3(2f, 8f, 2f), _stone);
             }
 
-            Primitive("Human scale / 2 m", PrimitiveType.Capsule, world, new Vector3(-7f, 1f, -5f), Vector3.one, m_stone);
+            Primitive("Human scale / 2 m", PrimitiveType.Capsule, world, new Vector3(-7f, 1f, -5f), Vector3.one, _stone);
             Environment(name);
             Label("WASD / arrows: pan   Q/E: rotate   Wheel: zoom\nShift: faster   MMB drag: orbit   Tab: projection", world,
                 new Vector3(-12f, 0.05f, -14f));
-            string scenePath = k_root + "/" + name + "/" + name + ".unity";
+            string scenePath = Root + "/" + name + "/" + name + ".unity";
             EditorSceneManager.SaveScene(scene, scenePath);
             MakeTemplate(name, scenePath, isLookDev ? "Compare asset scale, materials and silhouettes under neutral strategy-game lighting."
                 : "Standalone strategy camera, neutral lighting and metre-scale primitives. No game session required.");
@@ -205,7 +205,7 @@ namespace UnityStarter.SceneTemplates.Authoring
             RenderSettings.fog = false;
             RenderSettings.skybox = null;
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            AssetDatabase.CreateAsset(profile, k_root + "/" + sceneName + "/NeutralVolume.asset");
+            AssetDatabase.CreateAsset(profile, Root + "/" + sceneName + "/NeutralVolume.asset");
             var tonemapping = profile.Add<Tonemapping>();
             AssetDatabase.AddObjectToAsset(tonemapping, profile);
             tonemapping.mode.Override(TonemappingMode.None);
@@ -229,16 +229,16 @@ namespace UnityStarter.SceneTemplates.Authoring
             panel.referenceResolution = new Vector2Int(1280, 720);
             panel.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
             panel.match = 0.5f;
-            panel.themeStyleSheet = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(k_root + "/UIPreview/PreviewTheme.tss");
-            AssetDatabase.CreateAsset(panel, k_root + "/UIPreview/PreviewPanelSettings.asset");
+            panel.themeStyleSheet = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(Root + "/UIPreview/PreviewTheme.tss");
+            AssetDatabase.CreateAsset(panel, Root + "/UIPreview/PreviewPanelSettings.asset");
             var host = new GameObject("UI Preview");
             host.SetActive(false);
             var document = host.AddComponent<UIDocument>();
             document.panelSettings = panel;
-            document.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_root + "/UIPreview/PreviewScreen.uxml");
+            document.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(Root + "/UIPreview/PreviewScreen.uxml");
             host.AddComponent<PreviewScreen>();
             host.SetActive(true);
-            string path = k_root + "/UIPreview/UIPreview.unity";
+            string path = Root + "/UIPreview/UIPreview.unity";
             EditorSceneManager.SaveScene(scene, path);
             MakeTemplate("UIPreview", path, "Strategy HUD, catalogue, controls and modal focus. Sample data only; no game framework.");
         }
@@ -246,7 +246,7 @@ namespace UnityStarter.SceneTemplates.Authoring
         private void MakeTemplate(string name, string scenePath, string description)
         {
             var template = SceneTemplateService.CreateTemplateFromScene(AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath),
-                k_root + "/" + name + "/" + name + ".scenetemplate");
+                Root + "/" + name + "/" + name + ".scenetemplate");
             template.templateName = name == "UIPreview" ? "Strategy / UI Preview" : name == "AssetLookDev"
                 ? "Strategy / Asset LookDev" : "Strategy / Sandbox";
             template.description = description;
@@ -256,7 +256,7 @@ namespace UnityStarter.SceneTemplates.Authoring
                 string path = AssetDatabase.GetAssetPath(dependency.dependency);
                 bool isEditable = dependency.dependency is VolumeProfile || dependency.dependency is PanelSettings
                     || dependency.dependency is VisualTreeAsset || dependency.dependency is StyleSheet;
-                dependency.instantiationMode = path.StartsWith(k_root + "/" + name + "/", StringComparison.Ordinal) && isEditable
+                dependency.instantiationMode = path.StartsWith(Root + "/" + name + "/", StringComparison.Ordinal) && isEditable
                     ? TemplateInstantiationMode.Clone : TemplateInstantiationMode.Reference;
             }
 
@@ -270,7 +270,7 @@ namespace UnityStarter.SceneTemplates.Authoring
             material.name = name;
             material.SetColor("_BaseColor", color);
             material.SetFloat("_Smoothness", smoothness);
-            AssetDatabase.CreateAsset(material, k_root + "/Shared/Materials/" + name + ".mat");
+            AssetDatabase.CreateAsset(material, Root + "/Shared/Materials/" + name + ".mat");
             return material;
         }
 

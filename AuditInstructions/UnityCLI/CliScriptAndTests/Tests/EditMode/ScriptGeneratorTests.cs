@@ -7,26 +7,26 @@ namespace UnityBestPractices.Samples.Cli.Tests
 {
     public sealed class ScriptGeneratorTests
     {
-        private string m_folder;
+        private string _folder;
 
         [SetUp]
         public void SetUp()
         {
             string name = "ScriptGeneratorFixture" + Guid.NewGuid().ToString("N");
             string guid = AssetDatabase.CreateFolder("Assets", name);
-            m_folder = AssetDatabase.GUIDToAssetPath(guid);
+            _folder = AssetDatabase.GUIDToAssetPath(guid);
         }
 
         [TearDown]
         public void TearDown()
         {
-            AssetDatabase.DeleteAsset(m_folder);
+            AssetDatabase.DeleteAsset(_folder);
         }
 
         [Test]
         public void Preview_WritesNeitherScriptNorMetadata()
         {
-            string path = m_folder + "/Preview.cs";
+            string path = _folder + "/Preview.cs";
             Assert.That(ScriptGenerator.Generate(path, "// fixture source\n", true), Does.StartWith("WouldCreate:"));
             Assert.That(File.Exists(path), Is.False);
             Assert.That(File.Exists(path + ".meta"), Is.False);
@@ -35,7 +35,7 @@ namespace UnityBestPractices.Samples.Cli.Tests
         [Test]
         public void Rerun_PreservesGuidAndConflictingSource()
         {
-            string path = m_folder + "/Created.cs";
+            string path = _folder + "/Created.cs";
             const string source = "// fixture source\n";
             Assert.That(ScriptGenerator.Generate(path, source, false), Does.StartWith("Created:"));
             string guid = AssetDatabase.AssetPathToGUID(path);

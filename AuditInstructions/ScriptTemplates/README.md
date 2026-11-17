@@ -53,7 +53,7 @@ Example prompts:
 
 ## Conventions the templates carry
 
-- **Naming.** `m_` for private fields, `k_` for constants, `s_` for statics, and an explicit `private`.
+- **Naming.** `_`camelCase for private fields, `s_`camelCase for statics, PascalCase for constants, and an explicit `private`.
 - **Layout.** Allman braces, usings ordered system then Unity, and guard clauses with braces.
 - **Empty on purpose.** A MonoBehaviour has no `Update()`; Unity calls empty ones every frame.
 - **Placeholders say so.** Drawers and editors are unregistered until you name a target, and tests are

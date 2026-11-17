@@ -4,6 +4,6 @@ public sealed class Bad
 {
     private int WrongInstance;
     private static int WrongStatic;
-    private const int WrongConstant = 1;
-    public int wrongProperty => WrongInstance + WrongStatic + WrongConstant + Lookup.wrongLookup;
+    private const int wrongConstant = 1;
+    public int wrongProperty => WrongInstance + WrongStatic + wrongConstant + Lookup.wrongLookup;
 }

@@ -6,16 +6,16 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UIDocument))]
 public sealed class #SCRIPTNAME# : MonoBehaviour
 {
-    private UIDocument m_document;
+    private UIDocument _document;
 
     private void Awake()
     {
-        m_document = GetComponent<UIDocument>();
+        _document = GetComponent<UIDocument>();
     }
 
     public void SetVisible(bool isVisible)
     {
-        VisualElement root = m_document.rootVisualElement;
+        VisualElement root = _document.rootVisualElement;
         if (root != null)
         {
             root.style.display = isVisible ? DisplayStyle.Flex : DisplayStyle.None;

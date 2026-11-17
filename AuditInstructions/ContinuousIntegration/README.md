@@ -109,7 +109,7 @@ Vendor code is excluded from the style checks (`ThirdPartyAssets`, `Plugins`, `S
   NUnit-only configurations, explicit framework references, and a nested project path with spaces.
   These are static classification checks; they do not establish discovery or player inclusion.
 - **Style gates** with the shipped `.editorconfig` and .NET SDK 10.0: pass on the shipped sample scripts
-  and fail on a script with bad whitespace and a missing `m_` prefix.
+  and fail on a script with bad whitespace and a missing `_` prefix.
 - **Unity CLI with no sign-in or licence** (an empty home directory): `unity vcs doctor` runs and exits
   4 on a genuine finding, 0 when clean.
 - **The whole tier A sequence** ran on a fresh clone with no licence: all steps passed on clean code, and

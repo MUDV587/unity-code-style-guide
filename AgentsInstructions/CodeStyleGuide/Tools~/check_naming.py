@@ -7,7 +7,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]  # CodeStyleGuide folder, for EditorConfig/.editorconfig
 FIXTURES = Path(__file__).resolve().parent / "NamingFixture"
-EXPECTED = {"WrongInterface", "wrongLookup", "WrongInstance", "WrongStatic", "WrongConstant", "wrongProperty"}
+EXPECTED = {"WrongInterface", "wrongLookup", "WrongInstance", "WrongStatic", "wrongConstant", "wrongProperty"}
 with tempfile.TemporaryDirectory(prefix="starter-naming-") as temp:
     target = Path(temp)
     shutil.copy(ROOT / "EditorConfig/.editorconfig", target / ".editorconfig")
@@ -36,8 +36,8 @@ with tempfile.TemporaryDirectory(prefix="starter-naming-") as temp:
             lines = {change["LineNumber"] for change in diagnostics}
             if lines != {1, 2, 5, 6, 7, 8}: raise SystemExit("Unexpected diagnostic locations: " + str(lines))
             by_line = {change["LineNumber"]: change["FormatDescription"] for change in diagnostics}
-            expected_messages = {1: "Missing prefix: 'I'", 2: "upper case", 5: "Missing prefix: 'm_'",
-                                 6: "Missing prefix: 's_'", 7: "Missing prefix: 'k_'", 8: "upper case"}
+            expected_messages = {1: "Missing prefix: 'I'", 2: "upper case", 5: "Missing prefix: '_'",
+                                 6: "Missing prefix: 's_'", 7: "upper case", 8: "upper case"}
             if not all(fragment in by_line[line] for line, fragment in expected_messages.items()):
                 raise SystemExit("Unexpected naming rule selection: " + str(by_line))
         print(f"{fixture}: {len(diagnostics)} IDE1006 diagnostics (expected)")

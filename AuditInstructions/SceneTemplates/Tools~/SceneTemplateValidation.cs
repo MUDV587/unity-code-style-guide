@@ -15,7 +15,7 @@ namespace UnityStarter.SceneTemplates.Authoring
     /// <summary>Explicit validation/authoring operations for a disposable consumer project only.</summary>
     public static class SceneTemplateValidation
     {
-        private const string k_root = "Assets/StrategyStarter/SceneTemplates";
+        private const string Root = "Assets/StrategyStarter/SceneTemplates";
         private static string EvidenceDirectory => Path.Combine(Directory.GetParent(Application.dataPath).FullName, "ValidationResults");
 
         /// <summary>Instantiates two scenes per template, verifies saved dependency ownership, and reports all dependencies.</summary>
@@ -29,7 +29,7 @@ namespace UnityStarter.SceneTemplates.Authoring
             var report = new System.Text.StringBuilder();
             foreach (string name in new[] { "StrategySandbox", "UIPreview", "AssetLookDev" })
             {
-                string sourcePath = k_root + "/" + name + "/" + name + ".scenetemplate";
+                string sourcePath = Root + "/" + name + "/" + name + ".scenetemplate";
                 var template = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(sourcePath);
                 Require(template != null && template.isValid && template.addToDefaults, "Invalid/unlisted template: " + name);
                 Require(template.preview != null, "Missing imported preview: " + name);
@@ -74,7 +74,7 @@ namespace UnityStarter.SceneTemplates.Authoring
 
                     foreach (string dependency in AssetDatabase.GetDependencies(scenePath, true))
                     {
-                        Require(!dependency.StartsWith("Assets/") || dependency.StartsWith(k_root + "/")
+                        Require(!dependency.StartsWith("Assets/") || dependency.StartsWith(Root + "/")
                             || dependency.StartsWith("Assets/Generated/"), "Unexpected asset dependency: " + dependency);
                     }
                     report.AppendLine("REOPENED " + scenePath);

@@ -9,7 +9,7 @@ public sealed class AwaitableOperationTests
 {
     private static void SetDelay(NewAwaitableOperation op, float seconds)
     {
-        typeof(NewAwaitableOperation).GetField("m_delaySeconds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(op, seconds);
+        typeof(NewAwaitableOperation).GetField("_delaySeconds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(op, seconds);
     }
 
     [UnityTest]

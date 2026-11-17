@@ -7,61 +7,61 @@ namespace UnityStarter.SceneTemplates
     [RequireComponent(typeof(UIDocument))]
     public sealed class PreviewScreen : MonoBehaviour
     {
-        private const string k_hiddenClass = "is-hidden";
-        private VisualElement m_root;
-        private VisualElement m_modal;
-        private Button m_openButton;
-        private Button m_closeButton;
-        private Button m_selectButton;
-        private Label m_status;
-        private VisualElement m_workspace;
+        private const string HiddenClass = "is-hidden";
+        private VisualElement _root;
+        private VisualElement _modal;
+        private Button _openButton;
+        private Button _closeButton;
+        private Button _selectButton;
+        private Label _status;
+        private VisualElement _workspace;
 
         private void OnEnable()
         {
-            m_root = GetComponent<UIDocument>().rootVisualElement;
-            m_modal = m_root.Q("modalOverlay");
-            m_workspace = m_root.Q("workspace");
-            m_openButton = m_root.Q<Button>("openModal");
-            m_closeButton = m_root.Q<Button>("closeModal");
-            m_selectButton = m_root.Q<Button>("selectItem");
-            m_status = m_root.Q<Label>("status");
-            m_openButton.clicked += OpenModal;
-            m_closeButton.clicked += CloseModal;
-            m_selectButton.clicked += SelectItem;
-            m_root.RegisterCallback<KeyDownEvent>(HandleKeyDown, TrickleDown.TrickleDown);
+            _root = GetComponent<UIDocument>().rootVisualElement;
+            _modal = _root.Q("modalOverlay");
+            _workspace = _root.Q("workspace");
+            _openButton = _root.Q<Button>("openModal");
+            _closeButton = _root.Q<Button>("closeModal");
+            _selectButton = _root.Q<Button>("selectItem");
+            _status = _root.Q<Label>("status");
+            _openButton.clicked += OpenModal;
+            _closeButton.clicked += CloseModal;
+            _selectButton.clicked += SelectItem;
+            _root.RegisterCallback<KeyDownEvent>(HandleKeyDown, TrickleDown.TrickleDown);
             CloseModal();
         }
 
         private void OnDisable()
         {
-            m_openButton.clicked -= OpenModal;
-            m_closeButton.clicked -= CloseModal;
-            m_selectButton.clicked -= SelectItem;
-            m_root.UnregisterCallback<KeyDownEvent>(HandleKeyDown, TrickleDown.TrickleDown);
+            _openButton.clicked -= OpenModal;
+            _closeButton.clicked -= CloseModal;
+            _selectButton.clicked -= SelectItem;
+            _root.UnregisterCallback<KeyDownEvent>(HandleKeyDown, TrickleDown.TrickleDown);
         }
 
         private void OpenModal()
         {
-            m_workspace.SetEnabled(false);
-            m_modal.RemoveFromClassList(k_hiddenClass);
-            m_closeButton.Focus();
+            _workspace.SetEnabled(false);
+            _modal.RemoveFromClassList(HiddenClass);
+            _closeButton.Focus();
         }
 
         private void CloseModal()
         {
-            m_modal.AddToClassList(k_hiddenClass);
-            m_workspace.SetEnabled(true);
-            m_openButton.Focus();
+            _modal.AddToClassList(HiddenClass);
+            _workspace.SetEnabled(true);
+            _openButton.Focus();
         }
 
         private void SelectItem()
         {
-            m_status.text = "Selected: Workshop / production building";
+            _status.text = "Selected: Workshop / production building";
         }
 
         private void HandleKeyDown(KeyDownEvent evt)
         {
-            if (evt.keyCode == KeyCode.Escape && !m_modal.ClassListContains(k_hiddenClass))
+            if (evt.keyCode == KeyCode.Escape && !_modal.ClassListContains(HiddenClass))
             {
                 CloseModal();
                 evt.StopPropagation();

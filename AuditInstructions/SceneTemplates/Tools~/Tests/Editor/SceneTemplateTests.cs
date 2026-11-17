@@ -13,7 +13,7 @@ namespace UnityStarter.SceneTemplates.Tests
     /// <summary>Checks the scenes created by the disposable consumer preparation workflow.</summary>
     public sealed class SceneTemplateTests
     {
-        private const string k_root = "Assets/StrategyStarter/SceneTemplates";
+        private const string Root = "Assets/StrategyStarter/SceneTemplates";
 
         [TearDown]
         public void TearDown()
@@ -26,7 +26,7 @@ namespace UnityStarter.SceneTemplates.Tests
         [TestCase("AssetLookDev")]
         public void GeneratedScenesHaveIndependentEditableAssets(string name)
         {
-            var template = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(k_root + "/" + name + "/" + name + ".scenetemplate");
+            var template = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(Root + "/" + name + "/" + name + ".scenetemplate");
             Assert.That(template.isValid && template.addToDefaults, Is.True);
             Object first;
             Object second;
@@ -64,8 +64,8 @@ namespace UnityStarter.SceneTemplates.Tests
             EditorSceneManager.OpenScene("Assets/Generated/" + name + "0.unity");
             var camera = Object.FindAnyObjectByType<StrategyCameraController>();
             Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(camera),
-                Is.EqualTo(k_root + "/Shared/Camera/StrategyCameraRig.prefab"));
-            var source = AssetDatabase.LoadAssetAtPath<InputActionAsset>(k_root + "/Shared/Camera/StrategyCameraActions.inputactions");
+                Is.EqualTo(Root + "/Shared/Camera/StrategyCameraRig.prefab"));
+            var source = AssetDatabase.LoadAssetAtPath<InputActionAsset>(Root + "/Shared/Camera/StrategyCameraActions.inputactions");
             Assert.That(source.FindActionMap("Camera", true).enabled, Is.False);
             foreach (var renderer in Object.FindObjectsByType<Renderer>())
             {

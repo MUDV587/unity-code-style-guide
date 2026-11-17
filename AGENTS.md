@@ -8,8 +8,9 @@ follow [Maintaining this repository](#maintaining-this-repository); a target pro
 ## Working rules
 
 - Before the first owned C# change, read [the style policy](AgentsInstructions/CodeStyleGuide/UnityStyleGuide.md).
-  Use `m_` private instance fields, `k_` private constants, `s_` private statics, camelCase after the
-  prefix, Allman braces, explicit `private`, and properties for access. The policy defines exceptions.
+  Use `_camelCase` private/internal instance fields, PascalCase constants at any accessibility,
+  `s_camelCase` private/internal statics (including static readonly), Allman braces, explicit `private`,
+  and properties for access. The policy defines exceptions.
 - Read the target's actual engine/packages and selected systems before choosing APIs. Project
   decisions take precedence over generic skill defaults. Change a selected system only within the
   user's scope and update its configuration reference.

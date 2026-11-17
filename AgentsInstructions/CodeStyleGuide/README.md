@@ -33,9 +33,9 @@ Most of this guide is standard C# and Unity practice. The points below are the o
 
 | Convention | My choice | Common alternative |
 |---|---|---|
-| Private field prefix | `m_camelCase` | `_camelCase` or bare `camelCase` |
-| Constant prefix | `k_camelCase` for private consts | `PascalCase` or `SCREAMING_CASE` |
-| Static field prefix | `s_camelCase` | no prefix |
+| Instance field naming | `_camelCase` | `m_camelCase` or bare `camelCase` |
+| Constant naming | `PascalCase` at any accessibility | `k_camelCase` or `SCREAMING_CASE` |
+| Static field prefix | `s_camelCase` (including static readonly) | no prefix |
 | Brace style | Allman (brace on its own line) | K&R (brace on the same line) |
 | Line width | 120–140 characters | 80, 100, or unlimited |
 | `private` modifier | Always written | Omitted |
@@ -68,7 +68,7 @@ Comments should explain intent or context that is not obvious from the code itse
 
 Before adding comments, first consider whether clearer variable or method names would make the intent self-evident. Good naming often removes the need for commentary altogether. But where the reasoning genuinely isn't visible in the code — a workaround for a platform bug, a magic threshold someone tuned by hand — write it down. That context improves maintainability and also enables better automated code generation.
 
-For serialized fields, prefer Inspector-facing attributes where appropriate. A `[Tooltip]` is often more useful than a comment when a field needs explanation in the Inspector, and `[SerializeField]` can expose values that benefit from runtime debugging or tuning. Use attributes such as `[Range]`, `[Header]`, and `[ContextMenu]` to improve clarity and usability for designers and developers interacting with the Inspector. Keep one field per line and include units directly in field names when relevant (for example, `m_speedInMetersPerSecond`) to avoid ambiguity.
+For serialized fields, prefer Inspector-facing attributes where appropriate. A `[Tooltip]` is often more useful than a comment when a field needs explanation in the Inspector, and `[SerializeField]` can expose values that benefit from runtime debugging or tuning. Use attributes such as `[Range]`, `[Header]`, and `[ContextMenu]` to improve clarity and usability for designers and developers interacting with the Inspector. Keep one field per line and include units directly in field names when relevant (for example, `_speedInMetersPerSecond`) to avoid ambiguity.
 
 Avoid attribution comments like `// Created by…`; version control already provides accurate ownership and history. When a component has hard dependencies, use `[RequireComponent(typeof(OtherComponent))]` to enforce those relationships at edit time, ensuring required components are always present and eliminating the need for defensive null checks later.
 
@@ -76,7 +76,7 @@ Avoid attribution comments like `// Created by…`; version control already prov
 
 Favor composition over inheritance, leaning toward interfaces and component-based designs rather than deep class hierarchies. As a default, keep fields private to ensure proper encapsulation and adherence to core object-oriented principles. Expose behavior through methods and controlled access points instead of shared state.
 
-To reduce guesswork and make intent obvious at a glance, use consistent naming prefixes: `m_` for private member variables, `k_` for constants, and `s_` for static variables. This added specificity improves readability and helps communicate how a value is meant to be used.
+To reduce guesswork and make intent obvious at a glance, use consistent naming: `_`camelCase for private member variables, PascalCase for constants, and `s_` for static variables. This added specificity improves readability and helps communicate how a value is meant to be used.
 
 Keep MonoBehaviours focused on a single responsibility. If a class begins to grow too large or complex, consider decomposing it into smaller components or moving data and configuration into ScriptableObjects. Use properties for simple state access or lightweight state changes, and methods for actions or operations such as input handling and event-driven behavior. Method names should describe intent and behavior clearly — for example, prefer `ApplyDamage(int amount)` over `SetHealth(int amount)` to reflect what the operation actually does.
 
@@ -106,16 +106,16 @@ In short, write code that is easy to read first, and concise second. Readable co
 // Calculate the current movement speed based on input
 
 // Less clear version with a ternary operator
-m_currentMovementSpeed = m_forwardMovementInput.y * (m_isRunning ? m_runningSpeed : m_walkSpeed);
+_currentMovementSpeed = _forwardMovementInput.y * (_isRunning ? _runningSpeed : _walkSpeed);
 
 // Clearer version with if-else
-if (m_isRunning)
+if (_isRunning)
 {
-    m_currentMovementSpeed = m_forwardMovementInput.y * m_runningSpeed;
+    _currentMovementSpeed = _forwardMovementInput.y * _runningSpeed;
 }
 else
 {
-    m_currentMovementSpeed = m_forwardMovementInput.y * m_walkSpeed;
+    _currentMovementSpeed = _forwardMovementInput.y * _walkSpeed;
 }
 ```
 

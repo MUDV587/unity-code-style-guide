@@ -7,9 +7,9 @@ using UnityEngine;
 public sealed class #SCRIPTNAME# : MonoBehaviour
 {
     [Tooltip("Seconds the sample operation waits. Replace the wait with the real asynchronous work.")]
-    [SerializeField, Min(0f)] private float m_delaySeconds = 1f;
+    [SerializeField, Min(0f)] private float _delaySeconds = 1f;
 
-    private CancellationTokenSource m_operationSource;
+    private CancellationTokenSource _operationSource;
 
     private void OnEnable()
     {
@@ -24,21 +24,21 @@ public sealed class #SCRIPTNAME# : MonoBehaviour
     public void StartOperation()
     {
         CancelOperation();
-        m_operationSource = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+        _operationSource = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
         // Fire and forget: the method observes its own outcome, so the discard is deliberate.
-        _ = RunOperationAsync(m_operationSource.Token);
+        _ = RunOperationAsync(_operationSource.Token);
     }
 
     public void CancelOperation()
     {
-        if (m_operationSource == null)
+        if (_operationSource == null)
         {
             return;
         }
 
-        m_operationSource.Cancel();
-        m_operationSource.Dispose();
-        m_operationSource = null;
+        _operationSource.Cancel();
+        _operationSource.Dispose();
+        _operationSource = null;
     }
 
     // The owner observes every outcome, so an ignored Awaitable cannot hide an exception.
@@ -46,7 +46,7 @@ public sealed class #SCRIPTNAME# : MonoBehaviour
     {
         try
         {
-            await Awaitable.WaitForSecondsAsync(m_delaySeconds, token);
+            await Awaitable.WaitForSecondsAsync(_delaySeconds, token);
 
             // The object may have been destroyed or disabled while waiting.
             if (this == null || !isActiveAndEnabled)

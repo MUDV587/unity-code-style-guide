@@ -125,7 +125,7 @@ if (itemCount < processingThreshold)
 }
 
 [Tooltip("Maximum distance the player can travel in one frame")]
-[SerializeField] private float m_maxDeltaMovement = 10f;
+[SerializeField] private float _maxDeltaMovement = 10f;
 
 /// <summary>
 /// Applies damage and raises <see cref="HealthChanged"/> if the value actually changed.
@@ -152,6 +152,9 @@ public void ApplyDamage(int amount) { }
   - [Public methods](#public-methods)
   - [Private methods](#private-methods)
   - [Other classes](#other-classes)
+- ✅ Within each group: access level public → internal → protected → private, static before instance.
+  Fields are ordered `const` → `static readonly` → `static` → instance, with `[SerializeField]` first.
+  Constructors come after fields, before properties.
 
 ## Using statements
 
@@ -193,48 +196,49 @@ namespace MyGame.Characters
 
 ## Fields
 - ✅ Don't omit the `private` accessor even though it's technically implicit. It provides context about the intent.
-- ✅ Use `m_` for private fields, `k_` for private constants, and `s_` for static fields. All three use
-  **camelCase after the prefix** (`m_health`, `k_maxCount`, `s_sharedCount`).
+- ✅ Use `_`camelCase for private/internal instance fields (`_health`), `s_`camelCase for private/internal
+  static fields including static readonly (`s_sharedCount`), and **PascalCase for constants** at any
+  accessibility (`MaxCount` — `const` is implicitly static, so a field is never ambiguous).
 - ⚠️ **Exception:** `public const` members of a static lookup class are API surface, so they use
   PascalCase without a prefix (see [Animation parameters](#animation-parameters-layers-tags-sorting-layers-and-input-action-names)).
-  The `k_` prefix is for private constants.
+  Private constants use PascalCase as well.
 - ✅ Use descriptive names that clearly indicate the field's purpose.
 - ❌ Avoid abbreviations unless they are widely understood (e.g., `UI`, `ID`).
-- ✅ Include units in the name if applicable (e.g., `m_speedInMetersPerSecond`).
-- ✅ Prefix Boolean fields with verbs like `is`, `has`, or `can` for clarity (e.g., `m_isActive`, `m_hasPermission`).
-- ❌ Avoid redundancy by not repeating the class name in field names (e.g., use `m_health` instead of `m_playerHealth` in a `Player` class).
+- ✅ Include units in the name if applicable (e.g., `_speedInMetersPerSecond`).
+- ✅ Prefix Boolean fields with verbs like `is`, `has`, or `can` for clarity (e.g., `_isActive`, `_hasPermission`).
+- ❌ Avoid redundancy by not repeating the class name in field names (e.g., use `_health` instead of `_playerHealth` in a `Player` class).
 - ✅ Expose fields in the Inspector with `[SerializeField]`, keeping the field itself private.
 - ✅ Use properties when you need to access them from other classes.
 - ❌ Avoid redundant initializers. Value types default to `0` and reference types to `null`; writing
   that out adds noise.
 
 ```csharp
-// Use `m_` prefix for private fields
-private int m_health;
+// Use `_camelCase` for private fields
+private int _health;
 
 // Static field with s_ prefix
 private static int s_sharedCount;
 
-// Private constant with k_ prefix
-private const int k_maxCount = 100;
+// Private constant — PascalCase
+private const int MaxCount = 100;
 
 // Use [SerializeField] rather than exposing your field publicly; keep it private or make it a property
-[SerializeField] private int m_startingHealth;
+[SerializeField] private int _startingHealth;
 
 // Specify the unit used to eliminate guessing. Favor readability over brevity
-private int m_elapsedTimeInHours;
-private int m_elapsedTimeInDays;
-private int m_elapsedTimeInSeconds;
+private int _elapsedTimeInHours;
+private int _elapsedTimeInDays;
+private int _elapsedTimeInSeconds;
 
 // Prefix Booleans with a verb like "is" to make their meaning apparent
-[SerializeField] private bool m_isPlayerDead;
+[SerializeField] private bool _isPlayerDead;
 ```
 
 ### Properties
 - ✅ Place properties after fields and before MonoBehaviour methods as per your class organization.
 - ✅ Use PascalCase for properties and avoid prefixes/suffixes.
 - ✅ Prefer predicate names for boolean properties (Is/Has/Can), e.g., `IsGrounded`, `HasHealthPack`, `CanJump`.
-- ❌ Don't try to serialize a property directly. Use `[SerializeField] private T m_field` plus a public
+- ❌ Don't try to serialize a property directly. Use `[SerializeField] private T _field` plus a public
   property that returns or validates it.
 - ✅ Use `[field: SerializeField]` on an auto-property when you want the Inspector field without writing
   a backing field by hand. It's the concise option — note the Inspector label will show the compiler-
@@ -248,16 +252,16 @@ private int m_elapsedTimeInSeconds;
 
 ```csharp
 // Private backing field
-private int m_maxHealth;
+private int _maxHealth;
 
 // Read-only property
-public int MaxHealthReadOnly => m_maxHealth;
+public int MaxHealthReadOnly => _maxHealth;
 
 // Property with full implementation
 public int MaxHealth
 {
-    get => m_maxHealth;
-    set => m_maxHealth = value;
+    get => _maxHealth;
+    set => _maxHealth = value;
 }
 
 // Auto-implemented property
@@ -271,7 +275,7 @@ public Vector2 MovementInput
 {
     set
     {
-        m_forwardMovementInput = value;
+        _forwardMovementInput = value;
         Debug.Log("Movement input set.");
     }
 }
@@ -335,12 +339,12 @@ public readonly struct DamageInfo
 ```csharp
 private void OnEnable()
 {
-    m_gameManager.DoorOpened += HandleDoorOpened;
+    _gameManager.DoorOpened += HandleDoorOpened;
 }
 
 private void OnDisable()
 {
-    m_gameManager.DoorOpened -= HandleDoorOpened;
+    _gameManager.DoorOpened -= HandleDoorOpened;
 }
 ```
 
@@ -381,7 +385,7 @@ public static partial class GameSignals
 private void Awake()
 {
     // Cache component references here
-    m_rigidbody = GetComponent<Rigidbody>();
+    _rigidbody = GetComponent<Rigidbody>();
 }
 ```
 
@@ -393,8 +397,8 @@ private void Awake()
 private void OnEnable()
 {
     // Subscribe here; the matching -= belongs in OnDisable()
-    m_inputActions.Player.Jump.performed += HandleJumpPerformed;
-    m_health.Died += HandleDied;
+    _inputActions.Player.Jump.performed += HandleJumpPerformed;
+    _health.Died += HandleDied;
 }
 ```
 
@@ -407,7 +411,7 @@ private void OnEnable()
 private void Start()
 {
     // Use cached references and perform operations that might depend on other components being initialized
-    m_animator.SetTrigger(k_initializeTrigger);
+    _animator.SetTrigger(InitializeTrigger);
 }
 ```
 
@@ -419,8 +423,8 @@ private void Start()
 private void OnDisable()
 {
     // Unsubscribe from events here to prevent memory leaks or unexpected behavior
-    m_inputActions.Player.Jump.performed -= HandleJumpPerformed;
-    m_health.Died -= HandleDied;
+    _inputActions.Player.Jump.performed -= HandleJumpPerformed;
+    _health.Died -= HandleDied;
 }
 ```
 
@@ -438,11 +442,11 @@ private void OnDisable()
 private void OnDestroy()
 {
     // Release resources the GC won't clean up for you
-    m_inputActions?.Dispose();
+    _inputActions?.Dispose();
 
-    if (m_renderTexture != null)
+    if (_renderTexture != null)
     {
-        m_renderTexture.Release();
+        _renderTexture.Release();
     }
 
     ServiceLocator.Unregister(this);
@@ -477,7 +481,7 @@ private void Update()
 {
     // Put all your regular frame logic update code in Update()
 
-    if (!m_isActive) return; // Early return pattern
+    if (!_isActive) return; // Early return pattern
 
     // Move logic to well-named methods
     HandleMovement();
@@ -495,9 +499,9 @@ private void Update()
 // Use LateUpdate for camera follow so it reads the player's final position for this frame
 private void LateUpdate()
 {
-    Vector3 targetPosition = m_target.position + m_followOffset;
-    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref m_followVelocity, m_smoothTime);
-    transform.LookAt(m_target);
+    Vector3 targetPosition = _target.position + _followOffset;
+    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _followVelocity, _smoothTime);
+    transform.LookAt(_target);
 }
 ```
 
@@ -513,13 +517,13 @@ private void LateUpdate()
 private void Update()
 {
     // Bad - expensive operation every frame
-    var nearbyEnemies = Physics.OverlapSphere(transform.position, m_detectionRadius);
+    var nearbyEnemies = Physics.OverlapSphere(transform.position, _detectionRadius);
 
     // Better - cache and update less frequently
-    if (Time.time > m_nextUpdateTime)
+    if (Time.time > _nextUpdateTime)
     {
         UpdateNearbyEnemies();
-        m_nextUpdateTime = Time.time + m_updateInterval;
+        _nextUpdateTime = Time.time + _updateInterval;
     }
 }
 ```
@@ -538,16 +542,16 @@ public void ApplyDamage(int amount)
 {
     if (amount <= 0) return;
 
-    m_health = Mathf.Max(0, m_health - amount);
+    _health = Mathf.Max(0, _health - amount);
     OnDamageTaken(amount);
 
-    if (m_health == 0)
+    if (_health == 0)
     {
         HandleDeath();
     }
 }
 
-public bool CanAfford(int cost) => m_currency >= cost;
+public bool CanAfford(int cost) => _currency >= cost;
 ```
 
 ## Private methods
@@ -563,7 +567,7 @@ public bool CanAfford(int cost) => m_currency >= cost;
 // Event callbacks grouped together
 private void HandleDied()
 {
-    m_animator.SetTrigger(k_deathTrigger);
+    _animator.SetTrigger(DeathTrigger);
 }
 
 private void HandleJumpPerformed(InputAction.CallbackContext context)
@@ -575,7 +579,7 @@ private void HandleJumpPerformed(InputAction.CallbackContext context)
 private void HandleDeath()
 {
     enabled = false;
-    m_collider.enabled = false;
+    _collider.enabled = false;
 }
 ```
 
@@ -594,7 +598,7 @@ private void HandleDeath()
 ```csharp
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private List<Slot> m_slots = new();
+    [SerializeField] private List<Slot> _slots = new();
 
     // Nested - meaningless outside Inventory
     [Serializable]
@@ -632,19 +636,19 @@ internal enum SortOrder
 // Action: performs behavior / side effects
 public void Jump()
 {
-    m_rigidbody.AddForce(Vector3.up * m_jumpForce, ForceMode.Impulse);
+    _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
 }
 
 // Setter: clearly assigns or updates a value (suitable for input callbacks)
 public void SetMovementInput(Vector2 input)
 {
-    m_forwardMovementInput = input;
+    _forwardMovementInput = input;
 }
 
 // Modifier: transforms or changes state
 public void ChangeHealth(int amount)
 {
-    m_health += amount;
+    _health += amount;
 }
 
 // "Handle" for event-driven callbacks (responding to external events/input)
@@ -656,9 +660,9 @@ private void HandleTargetSelected(Targetable target)
 // "Process" for game logic operations (part of game flow, usually turn-based or system-driven)
 private void ProcessTurnIncome()
 {
-    foreach (Settlement settlement in m_settlements)
+    foreach (Settlement settlement in _settlements)
     {
-        m_resources.AddGold(settlement.GoldPerTurn);
+        _resources.AddGold(settlement.GoldPerTurn);
     }
 }
 
@@ -739,11 +743,11 @@ public enum Direction
     West
 }
 
-private Direction m_currentDirection;
+private Direction _currentDirection;
 
 private void Update()
 {
-    switch (m_currentDirection)
+    switch (_currentDirection)
     {
         case Direction.North:
             // Move north
@@ -807,22 +811,22 @@ ExecuteAction();
 ```csharp
 public class ScoreDisplay : MonoBehaviour
 {
-    [SerializeField] private TMP_Text m_scoreText;
-    private int m_lastScore = -1;
+    [SerializeField] private TMP_Text _scoreText;
+    private int _lastScore = -1;
 
     // Bad - readable, but allocates a new string every single frame
     private void Update()
     {
-        m_scoreText.text = $"Score: {m_score}";
+        _scoreText.text = $"Score: {_score}";
     }
 
     // Good - only allocates when the score actually changes
     private void Update()
     {
-        if (m_score == m_lastScore) return;
+        if (_score == _lastScore) return;
 
-        m_lastScore = m_score;
-        m_scoreText.text = $"Score: {m_score}";
+        _lastScore = _score;
+        _scoreText.text = $"Score: {_score}";
     }
 }
 ```
@@ -841,19 +845,19 @@ public class ScoreDisplay : MonoBehaviour
 public class EnemyRegistry : MonoBehaviour
 {
     // Target-typed new expression (C# 9.0+)
-    [SerializeField] private List<GameObject> m_enemies = new();
+    [SerializeField] private List<GameObject> _enemies = new();
 
     public void Register(GameObject enemy)
     {
-        if (!m_enemies.Contains(enemy))
+        if (!_enemies.Contains(enemy))
         {
-            m_enemies.Add(enemy);
+            _enemies.Add(enemy);
         }
     }
 
     public void Unregister(GameObject enemy)
     {
-        m_enemies.Remove(enemy);
+        _enemies.Remove(enemy);
     }
 }
 ```
@@ -934,15 +938,15 @@ private async void Start()
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Game Data/Weapon", order = 0)]
 public class WeaponDataSO : ScriptableObject
 {
-    [SerializeField] private string m_weaponName;
-    [SerializeField] private int m_damage;
-    [SerializeField] private float m_range;
-    [SerializeField] private GameObject m_projectilePrefab;
+    [SerializeField] private string _weaponName;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _range;
+    [SerializeField] private GameObject _projectilePrefab;
 
-    public string WeaponName => m_weaponName;
-    public int Damage => m_damage;
-    public float Range => m_range;
-    public GameObject ProjectilePrefab => m_projectilePrefab;
+    public string WeaponName => _weaponName;
+    public int Damage => _damage;
+    public float Range => _range;
+    public GameObject ProjectilePrefab => _projectilePrefab;
 }
 ```
 
@@ -953,7 +957,7 @@ public class WeaponDataSO : ScriptableObject
 - ✅ Always define these names as constants in code to prevent runtime errors, enable refactoring, and avoid typos.
 - ✅ Centralize these constants in a dedicated static class for maintainability and discoverability.
 - ℹ️ **Naming note:** `public const` members of a static lookup class are API surface, so they use
-  PascalCase with no prefix. The `k_` prefix is for private constants inside a behaviour.
+  PascalCase with no prefix. Private constants are PascalCase as well — see [Fields](#fields).
 - ✅ **For animators, go one step further and hash the parameter names.** `Animator.StringToHash` converts
   the string once at startup; every `SetBool`/`SetFloat`/`SetTrigger` after that skips the string lookup
   entirely. Store the hashes in `static readonly int` fields.
@@ -988,28 +992,28 @@ public class PlayerAnimator : MonoBehaviour
     private static readonly int s_speedHash = Animator.StringToHash("Speed");
     private static readonly int s_jumpTriggerHash = Animator.StringToHash("JumpTrigger");
 
-    private Animator m_animator;
+    private Animator _animator;
 
     private void Awake()
     {
-        m_animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
     private void UpdateMovement(bool isMoving, float currentSpeed)
     {
         // Safe and fast - no string comparison at runtime
-        m_animator.SetBool(s_isRunningHash, isMoving);
-        m_animator.SetFloat(s_speedHash, currentSpeed);
+        _animator.SetBool(s_isRunningHash, isMoving);
+        _animator.SetFloat(s_speedHash, currentSpeed);
     }
 }
 
 // Bad - magic strings scattered throughout code (runtime errors possible)
 private void UpdateMovementBadly(bool isMoving, float currentSpeed)
 {
-    m_animator.SetBool("IsWalking", isMoving);        // Typo risk
-    m_animator.SetFloat("Spead", currentSpeed);       // Typo - fails silently!
+    _animator.SetBool("IsWalking", isMoving);        // Typo risk
+    _animator.SetFloat("Spead", currentSpeed);       // Typo - fails silently!
 
-    if (m_animator.GetBool("IsWalknig"))              // Another typo
+    if (_animator.GetBool("IsWalknig"))              // Another typo
     {
         // This condition will never be true due to the typo
     }
@@ -1039,18 +1043,18 @@ Debug.LogError($"[{GetType().Name}] Failed to load data: {exception.Message}", t
 private void OnDrawGizmosSelected()
 {
     Gizmos.color = Color.green;
-    Gizmos.DrawWireSphere(transform.position, m_detectionRadius);
+    Gizmos.DrawWireSphere(transform.position, _detectionRadius);
 }
 
 // Use [RequireComponent] instead of null-checking a hard dependency
 [RequireComponent(typeof(AudioSource))]
 public class AudioPlayer : MonoBehaviour
 {
-    private AudioSource m_audioSource;
+    private AudioSource _audioSource;
 
     private void Awake()
     {
-        m_audioSource = GetComponent<AudioSource>();
+        _audioSource = GetComponent<AudioSource>();
     }
 }
 ```
@@ -1067,7 +1071,7 @@ public void SaveGame(GameData data)
     try
     {
         string json = JsonUtility.ToJson(data);
-        File.WriteAllText(k_saveFilePath, json);
+        File.WriteAllText(SaveFilePath, json);
     }
     catch (IOException ioEx)
     {
