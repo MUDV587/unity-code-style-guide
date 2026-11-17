@@ -5,11 +5,11 @@ using Sample.Game;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public sealed class AwaitableOperationTests
+public sealed class CoroutineOperationTests
 {
-    private static void SetDelay(NewAwaitableOperation op, float seconds)
+    private static void SetDelay(NewCoroutineOperation op, float seconds)
     {
-        typeof(NewAwaitableOperation).GetField("_delaySeconds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(op, seconds);
+        typeof(NewCoroutineOperation).GetField("_delaySeconds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(op, seconds);
     }
 
     [UnityTest]
@@ -17,7 +17,7 @@ public sealed class AwaitableOperationTests
     {
         GameObject go = new GameObject("op");
         go.SetActive(false);
-        NewAwaitableOperation op = go.AddComponent<NewAwaitableOperation>();
+        NewCoroutineOperation op = go.AddComponent<NewCoroutineOperation>();
         SetDelay(op, 0.05f);
         go.SetActive(true);          // OnEnable starts an operation
         op.StartOperation();         // restart cancels the first
@@ -29,7 +29,7 @@ public sealed class AwaitableOperationTests
         yield return new WaitForSeconds(0.25f);
         op.CancelOperation();
         op.CancelOperation();        // idempotent
-        Object.Destroy(go);          // destroy cancels any running operation
+        Object.Destroy(go);          // destroy stops any running coroutine
         yield return new WaitForSeconds(0.1f);
         LogAssert.NoUnexpectedReceived();
     }

@@ -6,6 +6,8 @@
 
 # CoreCLR migration (agent instructions)
 
+**Unity 6 documentation; not applicable to Unity 2022.3.** Load it when the target Editor supports CoreCLR — see the `Unity6000` branch.
+
 **This guide is work in progress.** It prepares a project for Unity's move from Mono to CoreCLR. This
 document is self-contained and experimental: load it for an actual runtime migration, not for normal
 starter setup. The selected starter stays on the engine and language profile in

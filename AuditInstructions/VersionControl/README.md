@@ -99,11 +99,11 @@ Unity's UnityYAMLMerge merges scene and prefab files by object instead of by lin
 **per clone**, because the merge driver in `.git/config` names the Editor on your machine. Each
 contributor runs `unity vcs merge-setup` once; it writes the matching attributes and checks the tool
 with a test merge. Without the Unity CLI, follow the
-[Smart Merge manual page](https://docs.unity.com/en-us/engine/6000.7/manual/get-started/project-configuration/version-control/smart-merge).
+[Smart Merge manual page](https://docs.unity3d.com/2022.3/Documentation/Manual/get-started/project-configuration/version-control/smart-merge).
 
 ## Settings that make this work
 
-Two Unity settings decide whether Git can do its job, and both are Unity 6 defaults: **Asset
+Two Unity settings decide whether Git can do its job. They are **the defaults Unity ships with** (Force Text and Visible Meta Files since 2020 — both also the Unity 6 defaults): **Asset
 Serialization = Force Text** and **Version Control Mode = Visible Meta Files**. The
 [project settings guide](../ProjectSettings/README.md) covers them, and `unity vcs doctor` reports both.
 

@@ -32,12 +32,13 @@ Example prompts:
 ## Why versions work differently per package
 
 Some packages ship inside the Unity Editor. Unity calls them
-[core packages](https://docs.unity3d.com/Manual/pack-core.html), and their version is fixed to your
+[core packages](https://docs.unity3d.com/2022.3/Documentation/Manual/pack-core.html), and their version is fixed to your
 Editor version, so you cannot pick one. Other packages come from the registry, where the agent uses
 Unity's recommended version, or the latest compatible release when none is recommended. Which packages
 are core depends on your Editor version, so the agent checks your project instead of assuming. For
-example, Cinemachine is a core package from Unity 6.6, and a Cinemachine 2 project moves to
-Cinemachine 3, which has a different API.
+example, Cinemachine became a core package in Unity 6.6, and a Cinemachine 2 project moving to
+Unity 6 faces a Cinemachine 3 migration with a different API — on 2022.3 Cinemachine remains a
+registry package.
 
 ## What it will not do
 

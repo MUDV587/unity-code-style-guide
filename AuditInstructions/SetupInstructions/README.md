@@ -68,7 +68,7 @@ an item already confirmed here; it applies only the confirmed items from its own
 ## 1. Establish choices
 
 Confirm the destination, project name/namespace, installed Editor, platform, and selected resources.
-Read [UnityTechStack.md](../../AgentsInstructions/UnityTechStack/UnityTechStack.md). Retain the URP/Input System/UI Toolkit/Awaitable/ObjectPool
+Read [UnityTechStack.md](../../AgentsInstructions/UnityTechStack/UnityTechStack.md). Retain the URP/Input System/UI Toolkit/coroutines/ObjectPool
 profile unless the user selects another stack. The intended engine line is recorded there; use an
 exact chosen release, not an assumed latest version. For an existing project, inspect its settings,
 packages, dirty scenes, and source-control state first.

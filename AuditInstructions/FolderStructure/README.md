@@ -110,7 +110,7 @@ depends on the template (for example render-pipeline and volume settings). It us
 sample scene and sample assets. The agent reuses `Assets/Settings`, so the starter's
 `Settings/Presets` sits inside the folder Unity already made. It leaves the samples in place and
 tells you they exist; deleting them is your call. See Unity's
-[default project directories](https://docs.unity.com/en-us/engine/6000.6/manual/get-started/project-configuration/default-directories).
+[default project directories](https://docs.unity3d.com/2022.3/Documentation/Manual/get-started/project-configuration/default-directories).
 
 ## Names and paths
 

@@ -48,7 +48,7 @@ Example prompts:
 | Editor tooling, IMGUI | Custom Editor, Editor Window, Property Drawer |
 | Editor tooling, UI Toolkit | Custom Editor, Editor Window, Property Drawer |
 | Tests | EditMode and PlayMode skeletons, ignored until you add an assertion |
-| Runtime patterns | Static Event, Object Pool Handler, Awaitable Operation |
+| Runtime patterns | Static Event (Unity 6.5+ only — not on 2022.3), Object Pool Handler, Coroutine Operation |
 | Networking | NetworkBehaviour (needs Netcode for GameObjects) |
 
 ## Conventions the templates carry
@@ -73,7 +73,10 @@ Example prompts:
 - A template is only text. Installing one proves nothing about the C# it later generates, which is why
   the guide offers a generation check.
 
-## Pressure-tested, October 2026
+## Pressure-tested upstream (Unity 6.x)
+
+**Not re-tested on 2022.3** — the fork's `Unity2022` branch adapts the kit without re-running these
+checks. The recorded run (October 2026, Unity 6.x), kept for reference:
 
 All 14 non-package templates were expanded through Unity's own template engine in a disposable
 Unity 6000.7.0b4 project, once with an empty Root Namespace and once with `Sample.Game`, with Enter
@@ -86,9 +89,10 @@ Play Mode set to skip domain reload. The result:
   class `partial`). The new version compiled with no diagnostics on 6000.7.0b4 and 6000.6.2f1.
   The API is documented from 6.5; those two releases are the compile-tested versions. Before 6.5,
   defer the shipped template or separately select a custom adaptation with a manual reset.
-- **Behavior check for Awaitable Operation.** A PlayMode test restarted the operation, disabled and
+- **Behavior check (Awaitable Operation, upstream Unity 6).** A PlayMode test restarted the operation, disabled and
   re-enabled the object, cancelled twice, and destroyed it mid-run, and logged no errors or exceptions.
-  Writing the template also exposed a compiler warning (`CS4014`, an un-awaited call), fixed with an explicit discard.
+  The 2022.3 line ships the rewritten Coroutine Operation template; that test was not re-run on 2022.3
+  and ships as a reference (`Tools~/CoroutineOperationTests.cs.txt`).
 - **Not tested:** the EditMode and PlayMode test templates and the NetworkBehaviour template (they need
   Test Framework and Netcode, validated earlier in this repository's [validation record](../../Validation.md)),
   the logging path for a faulting operation, and the runtime *behavior* of the Static Event reset

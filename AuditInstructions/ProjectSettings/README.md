@@ -5,7 +5,7 @@
 # Project settings
 
 A short list of settings that are cheap to get right at the start and expensive to fix later. The
-agent document works on any Unity 6 project, new or established, and it reviews before it changes
+agent document works on any Unity 2022.3 project, new or established, and it reviews before it changes
 anything.
 
 | I want to… | Give your agent |
@@ -50,9 +50,10 @@ Platform choices (graphics APIs, scripting backend, quality tiers) live in the
 When you press Play, Unity can reload your scripts (a *domain reload*) and reload the scene.
 Reloading scripts resets every `static` variable, so it hides bugs but costs seconds on every Play.
 
-- **Unity's defaults changed.** In new projects from Unity 6.6, Enter Play Mode is set to
-  **Reload Scene only**: the domain is *not* reloaded. Unity's 6.7 manual recommends leaving it off
-  for speed and because the future CoreCLR runtime has no domain reload at all.
+- **Unity's defaults changed at some point.** Recent new projects can enter Play mode without
+  reloading the domain. The default differs by Editor version and template — read the actual
+  dropdown rather than assume. (Unity 6.6 changed the documented new-project default to
+  **Reload Scene only**; 2022.3 may differ.)
 - **What breaks.** With the domain left alone, static fields keep their values from the last Play,
   and static events keep their old subscribers. A counter that should restart at zero doesn't, and
   an event can fire twice. The game works in a build and misbehaves in the Editor, or the reverse.
@@ -60,11 +61,11 @@ Reloading scripts resets every `static` variable, so it hides bugs but costs sec
   resets supported static state; its containing type must be `partial` for generated cleanup.
   `[NoAutoStaticsCleanup]` opts out: use it only for state intentionally preserved between Plays,
   such as IDs that must remain unique across sessions. A gameplay counter that should restart needs
-  a reset. On older Editors, use an explicit
+  a reset. On 2022.3, which has no such attribute, use an explicit
   `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` reset.
 - **What the agent does.** It reads the saved policy and audits mutable static state before proposing
-  a change. Existing and older projects keep their observed setting during review; the 6.6+ default
-  is a starting choice for new projects. Unprotected state can justify a separately confirmed
+  a change. Existing projects keep their observed setting during review; for new projects the default
+  depends on the Editor — verify instead of assuming. Unprotected state can justify a separately confirmed
   **Reload Domain and Scene** stopgap, with the reason recorded.
 - **Leave scene reload on.** Turning it off too means `OnDestroy` is skipped and your code has to
   restore object state itself.
@@ -81,8 +82,9 @@ An existing project keeps whatever it saved before, so the agent reads the real 
 
 ## Good to know
 
-- **Version.** This was checked in October 2026 against the Unity 6.7 manual, which was in beta
-  and had no 6.7 "what's new" page yet. Items marked 6.6+ come from the 6.6 release notes.
+- **Version.** This branch (`Unity2022`) targets Unity 2022.3 LTS; the 2022.3-specific adaptations
+  are not re-verified, so version-sensitive defaults and APIs should be checked against your installed
+  Editor. (The upstream document references the Unity 6.6/6.7 defaults, which no longer apply here.)
 - **Preferences are personal.** Auto Refresh, worker count, and what happens when you edit scripts
   during Play are Editor preferences on your machine, not project settings. The agent recommends
   them but doesn't change them.

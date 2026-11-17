@@ -42,7 +42,7 @@ still pick and confirm them before anything changes.
 
 - *Graphics API.* Direct3D 11 is the safe Windows baseline; Direct3D 12 pays off only for features
   that need it and must keep D3D11 as a fallback. Metal is the only choice on Mac.
-- *Architecture.* Apple Silicon only is the modern Mac default; Intel is deprecated in Unity 6.6.
+- *Architecture.* Apple Silicon only is the modern Mac default; Intel is deprecated in Unity 6.6 (still supported on 2022.3).
 - *Window and frame pacing.* Borderless fullscreen and vSync on give the fewest surprises.
 - *Shader hitches.* First-use shader compilation stutters; the guide warms pipeline states
   during a loading screen.

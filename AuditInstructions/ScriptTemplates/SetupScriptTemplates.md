@@ -8,14 +8,15 @@
 
 Install selected script templates (`.cs.txt` files that Unity offers in the Create menu) into an
 existing Unity project. This document is self-contained and installs template text only: no
-generated gameplay scripts, packages, asmdefs, or project settings. **Last verified: October 2026**
-(Unity 6000.7.0b4; the Static Event template also on 6000.6.2f1).
+generated gameplay scripts, packages, asmdefs, or project settings. **Last verified on Unity 2022.3:
+not executed** (this fork's `Unity2022` branch retargets the kit for 2022.3; the upstream evidence
+covers Unity 6000.7.0b4 / 6000.6.2f1). Treat 2022.3-specific claims here as adapted, not as tested.
 
 Source (replace `main` with a commit SHA for a repeatable run):
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/AuditInstructions/ScriptTemplates/`
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/AuditInstructions/ScriptTemplates/`
 Each template is two files, `<name>.cs.txt` and `<name>.cs.txt.meta`. Filenames contain spaces, so
 URL-encode them. The license is
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/LICENSE`.
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/LICENSE`.
 
 ## Operating rules
 
@@ -69,7 +70,8 @@ Read the target's instructions. Identify one Unity project (the user's destinati
 workspace, containing `Assets` and `ProjectSettings/ProjectVersion.txt`). Record:
 
 - Editor version, and whether that Editor is open. Unity 6.5 or later is needed for the Static Event
-  template as shipped (the attribute is documented from 6.5; tested on 6000.6 and 6000.7; see its row below).
+  template as shipped (the attribute is documented from 6.5). On 2022.3 that template is unavailable —
+  use an adapted custom template with a `SubsystemRegistration` reset instead; see its row below.
 - The Root Namespace (Project Settings > Editor), packages already installed (Test Framework,
   Netcode for GameObjects), and any assembly definitions.
 - The contents of `Assets/ScriptTemplates/`, including customized templates.
@@ -103,17 +105,17 @@ not install groups. All selected files install flat into `Assets/ScriptTemplates
 | 8 | IMGUI Property Drawer | `OptionalScriptTemplates/8-Scripting__Property Drawer-NewPropertyDrawer` | Editor-only; supply the target type | `d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9` |
 | 9 | EditMode test | `OptionalScriptTemplates/9-Scripting__Unit Test EditMode-NewEditModeTest` | Test Framework and an isolated EditMode asmdef | `e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0` |
 | 10 | PlayMode test | `OptionalScriptTemplates/10-Scripting__Unit Test PlayMode-NewPlayModeTest` | Test Framework and an isolated PlayMode asmdef | `f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1` |
-| 11 | Static Event | `OptionalScriptTemplates/11-Scripting__Static Event-NewStaticEvent` | **Unity 6.5+** (`Unity.Scripting.LifecycleManagement`) | `a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2` |
+| 11 | Static Event | `OptionalScriptTemplates/11-Scripting__Static Event-NewStaticEvent` | **Unity 6.5+ only** (`Unity.Scripting.LifecycleManagement`) — not supported on 2022.3; defer this template | `a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2` |
 | 12 | Object Pool Handler | `OptionalScriptTemplates/12-Scripting__Object Pool Handler-NewObjectPoolHandler` | An inactive prefab; host-lifetime owner | `b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3` |
-| 14 | NetworkBehaviour | `OptionalScriptTemplates/14-Scripting__NetworkBehaviour-NewNetworkBehaviour` | Netcode for GameObjects with the universal `[Rpc]` API (validated 3.1.0) | `c9a4204bb6b834fbcb54e64df11762ef` |
+| 14 | NetworkBehaviour | `OptionalScriptTemplates/14-Scripting__NetworkBehaviour-NewNetworkBehaviour` | Netcode for GameObjects 1.x (2022.3 line) with the universal `[Rpc]` API | `c9a4204bb6b834fbcb54e64df11762ef` |
 | 15 | UI Toolkit Custom Editor | `OptionalScriptTemplates/15-Scripting__UI Toolkit Custom Editor-NewUIToolkitEditor` | Editor-only | `fa761b9db816d440abab41024553c89b` |
 | 16 | UI Toolkit Editor Window | `OptionalScriptTemplates/16-Scripting__UI Toolkit Editor Window-NewUIToolkitWindow` | Editor-only; choose a unique menu path | `6a9841d6af62642e1a5366591f611729` |
 | 17 | UI Toolkit Property Drawer | `OptionalScriptTemplates/17-Scripting__UI Toolkit Property Drawer-NewUIToolkitDrawer` | Editor-only; supply the target type | `adcf1d46ad9e54b5ea5836c18000a892` |
-| 18 | Awaitable Operation | `OptionalScriptTemplates/18-Scripting__Awaitable Operation-NewAwaitableOperation` | Unity 6 (`Awaitable`, `destroyCancellationToken`); replace the sample wait with real work | `406ed49d3c7214eb1a541e7cb061acb1` |
+| 18 | Coroutine Operation | `OptionalScriptTemplates/18-Scripting__Coroutine Operation-NewCoroutineOperation` | Coroutines (2022.3); replace the sample wait with real work | `406ed49d3c7214eb1a541e7cb061acb1` |
 
 Notes on choosing:
 
-- Awaitable Operation is the async pattern: one cancellable operation owned by the component, cancelled on disable, destroy, or restart, with every outcome observed.
+- Coroutine Operation is the async pattern: one cancellable operation owned by the component, cancelled on disable, destroy, or restart via `StopCoroutine`, gated on liveness (`isActiveAndEnabled`).
 - The five defaults need no package and no project-specific base class. Everything else is opt-in.
 - Choose one Inspector approach per target: IMGUI (6 to 8) or UI Toolkit (15 to 17). Unity recommends
   UI Toolkit for new Editor UI; IMGUI still works. Drawer and Editor templates are deliberately
@@ -121,9 +123,8 @@ Notes on choosing:
 - Test templates are `[Ignore]`d placeholders until real assertions replace them; report them as
   unfinished.
 - A retired priority-13 state sketch exists in `ReferenceOnly/`. Do not install it.
-- **Static Event compatibility:** the attribute is documented from Unity 6.5; the shipped template
-  was compiled on 6000.6.2f1 and 6000.7.0b4. Confirm API/code-generator availability on other patches.
-  On an Editor before 6.5, defer this shipped template. If the user separately selects an adapted
+- **Static Event compatibility:** the attribute is documented from Unity 6.5 and does not exist on
+  2022.3 — do not install this template on a 2022.3 project. If the user separately selects an adapted
   custom template, preserve the shipped pair and create the adaptation through the target
   project's Editor workflow with its own identity. Remove the unavailable lifecycle namespace and
   attribute from that adaptation, and reset its event with:
@@ -189,7 +190,7 @@ afterward. For each selected template:
 
 1. Expand it twice, once with an empty Root Namespace and once with a populated one, using Unity's own
    expansion. Unity's non-public `ProjectWindowUtil.CreateScriptAssetFromTemplate(path, templateFile)`
-   works through reflection (verified on 6000.7.0b4); the public `CreateScriptAssetFromTemplateFile`
+   works through reflection (verified on 6000.7.0b4; not re-verified on 2022.3 — mark results accordingly); the public `CreateScriptAssetFromTemplateFile`
    is interactive.
 2. Place Editor templates in an `Editor` folder or Editor-only assembly, and tests in isolated test
    assemblies.
@@ -232,7 +233,7 @@ Templates are plain text with Unity substitutions. Keep these when editing a cop
 ## References
 
 - [Customize Unity script templates](https://support.unity.com/hc/en-us/articles/210223733-How-to-customize-Unity-script-templates) (Unity Support)
-- [AutoStaticsCleanup API](https://docs.unity3d.com/ScriptReference/Unity.Scripting.LifecycleManagement.AutoStaticsCleanupAttribute.html) (documented from 6.5; compile-tested releases listed above)
-- [Enter Play mode without domain reload](https://docs.unity.com/en-us/engine/6000.7/manual/programming-environment/code-reload-serialization/code-reload/code-reloading-editor/domain-reloading)
+- [AutoStaticsCleanup API](https://docs.unity3d.com/ScriptReference/Unity.Scripting.LifecycleManagement.AutoStaticsCleanupAttribute.html) — Unity 6 only; on 2022.3 use [RuntimeInitializeOnLoadMethod(SubsystemRegistration)](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/RuntimeInitializeLoadType.SubsystemRegistration.html) instead
+- [Enter Play mode without domain reload](https://docs.unity3d.com/2022.3/Documentation/Manual/editor-play-mode-settings.html)
 - [ObjectPool&lt;T&gt;](https://docs.unity3d.com/ScriptReference/Pool.ObjectPool_1-ctor.html)
 - [Netcode for GameObjects RPCs](https://mp-docs.dl.it.unity3d.com/netcode/current/advanced-topics/message-system/rpc-params/)

@@ -6,14 +6,16 @@ folder into `Assets` never imports it.
 - `validate_scripttemplates.py` is the static check (tokens, prefixes, GUID table versus metadata,
   static state needs a lifecycle attribute). `python3 -I Tools~/validate_scripttemplates.py`.
 - `inventory.json` freezes each template's GUID.
-- `AwaitableOperationTests.cs.txt` is a PlayMode test for the Awaitable Operation template (renamed so Unity never imports it from the repository).
+- `CoroutineOperationTests.cs.txt` is a PlayMode test for the Coroutine Operation template (renamed so Unity never imports it from the repository).
 - `GenerateTemplates.cs` expands every template through Unity's own engine so the output can be
   compiled and read for diagnostics.
 
 ## Reproduce the generation check
 
-Use a disposable project, never a real one. Last run: October 2026, Unity 6000.7.0b4 (and the Static
-Event template on 6000.6.2f1).
+Use a disposable project, never a real one. **Not re-run for the Unity 2022.3 line** (fork
+`Unity2022` branch); the last recorded run is October 2026, Unity 6000.7.0b4 (and the Static
+Event template on 6000.6.2f1). Note the Static Event template is not supported on 2022.3 and the
+Coroutine Operation template replaced the Awaitable Operation template.
 
 1. Create a project containing only a `Packages/manifest.json` (modules `ui`, `uielements`, `imgui`,
    `physics`, `jsonserialize`, `audio`), `ProjectSettings/ProjectVersion.txt`, and this

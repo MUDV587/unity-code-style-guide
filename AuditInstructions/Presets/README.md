@@ -4,7 +4,7 @@
 
 # Import presets
 
-Unity [Presets](https://docs.unity.com/en-us/engine/6000.7/manual/assets-and-media/presets/default)
+Unity [Presets](https://docs.unity3d.com/2022.3/Documentation/Manual/assets-and-media/presets/default)
 store importer settings so every texture, sound, or model of a given kind imports the same way.
 This folder ships 13 small, partial presets and an agent guide that installs them safely.
 

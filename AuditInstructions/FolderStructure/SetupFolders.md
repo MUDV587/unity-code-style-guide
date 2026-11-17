@@ -222,7 +222,7 @@ Put unresolved conflicts, unpicked recommendations that need a ruling, and open 
 ## References
 
 - [Special folder names](https://docs.unity3d.com/Manual/SpecialFolders.html)
-- [Default project directories](https://docs.unity.com/en-us/engine/6000.6/manual/get-started/project-configuration/default-directories)
+- [Default project directories](https://docs.unity3d.com/2022.3/Documentation/Manual/get-started/project-configuration/default-directories)
 - [Custom package layout](https://docs.unity3d.com/Manual/cus-layout.html)
 - [Organizing your Unity project](https://unity.com/how-to/organizing-your-project)
 - [Assembly definitions](https://docs.unity3d.com/Manual/assembly-definitions-intro.html)

@@ -47,8 +47,7 @@ TextMesh Pro dependency and no third-party art.
   are URP assets. Built-in and HDRP are not supported.
 - **Input System package**, with *Active Input Handling* set to *Input System Package (New)* or
   *Both*. The runtime assembly references it, so the UI Preview needs it too.
-- Unity 6.6 or later. The assets were authored on 6000.7.0b4 (URP 17.7.0, Input System 6.7.0) and
-  also pass on 6000.6.2f1 (URP 17.6.0, Input System 1.20.0). Earlier Editors were not tested.
+- **Unity 2022.3 LTS** (this fork's `Unity2022` line): URP 14 is expected to work — the materials reference built-in URP shaders (stable GUIDs across URP versions) — but this branch is **not re-tested on 2022.3**; the shipped assets were authored on Unity 6.6/6.7 (URP 17) and may need manual verification. The `Unity6000` branch of this fork carries the Unity 6 line.
 
 Installing changes no project setting, build scene list, or layer. Rendering quality, HDR output,
 and shadow budgets stay your choices.

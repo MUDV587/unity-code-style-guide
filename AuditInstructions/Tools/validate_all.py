@@ -88,7 +88,7 @@ for path in ROOT.rglob("*.meta"):
 
 agents = (ROOT / "AGENTS.md").read_text()
 stack = (ROOT / "AgentsInstructions/UnityTechStack/UnityTechStack.md").read_text()
-require("6000.7.x" in stack, "Intended version must remain Unity 6.7")
+require("2022.3" in stack, "Intended version must remain Unity 2022.3 LTS on the Unity2022 branch")
 require(not re.search(r"6000\.[0-9]|C# version:", agents), "AGENTS must route version choices to one source")
 require("AuditInstructions/ProjectAuditGuides/ProjectReview.md" in agents and "AuditInstructions/SetupInstructions/README.md" in agents,
         "AGENTS routing missing")

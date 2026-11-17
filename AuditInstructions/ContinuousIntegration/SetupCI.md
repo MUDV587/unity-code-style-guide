@@ -11,10 +11,10 @@ activated on a hosted CI runner (the CLI's own generated workflow notes that `un
 --personal` does not work there), so the default design runs everything that needs no Editor on a hosted
 runner, and runs Editor tests locally or on a machine the user hosts. This document is self-contained.
 It does not commit, push, register a runner, or store a secret. **Last verified: October 2026** (Git
-2.54, .NET SDK 10.0, Unity CLI 1.0.0-beta.13, Unity 6000.7.0b4 and 6000.6.2f1).
+2.54, .NET SDK 10.0, Unity CLI 1.0.0-beta.13, Unity 6000.7.0b4 and 6000.6.2f1) — **not re-verified on 2022.3**; the tier-A static checks (metadata, GUIDs, whitespace/naming) are Editor-version agnostic, tier-B/C/D depend on your licensed Editor.
 
 Source (replace `main` with a commit SHA for a repeatable run):
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/AuditInstructions/ContinuousIntegration/`
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/AuditInstructions/ContinuousIntegration/`
 
 ## What each tier does
 

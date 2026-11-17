@@ -6,8 +6,7 @@
 # Install packages (agent instructions)
 
 Review which Unity packages a project has, recommend the missing ones it needs, and install only the
-ones the user picks and confirms. This document is self-contained. **Last verified: October 2026**
-(core package list checked against the 6000.6 and 6000.7 manuals).
+ones the user picks and confirms. This document is self-contained. **Last verified: October 2026** (upstream; upstream checked the core package list against the 6000.6/6000.7 manuals — check yours against your Editor's [core packages page](https://docs.unity3d.com/2022.3/Documentation/Manual/pack-core.html)).
 
 ## Operating rules
 
@@ -187,9 +186,8 @@ installed, skipped, or failed.
 
 ## References
 
-- [Core packages](https://docs.unity3d.com/Manual/pack-core.html) and
-  [package states](https://docs.unity3d.com/Manual/upm-lifecycle.html)
-- [`Client.Add`](https://docs.unity3d.com/ScriptReference/PackageManager.Client.Add.html) and
-  [`VersionsInfo`](https://docs.unity3d.com/ScriptReference/PackageManager.VersionsInfo.html)
-- [Upgrade to Unity 6.6](https://docs.unity.com/en-us/engine/7000.0/manual/upgrade-guides/upgrade-guide-unity66):
-  Cinemachine became a core package, and Cinemachine 2 projects move to Cinemachine 3.
+- [Core packages](https://docs.unity3d.com/2022.3/Documentation/Manual/pack-core.html) and
+  [package states](https://docs.unity3d.com/2022.3/Documentation/Manual/upm-lifecycle.html)
+- [`Client.Add`](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/PackageManager.Client.Add.html) and
+  [`VersionsInfo`](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/PackageManager.VersionsInfo.html)
+- Cinemachine note: Cinemachine became a core package in Unity 6.6 — on 2022.3 it remains a registry package; plan accordingly.

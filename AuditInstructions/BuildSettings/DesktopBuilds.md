@@ -5,10 +5,10 @@
 
 # Mac and Windows desktop build setup (agent instructions)
 
-Configure the Windows and macOS standalone players of a URP project on Unity 6.7+. This document is
+Configure the Windows and macOS standalone players of a URP project on Unity 2022.3 LTS. This document is
 self-contained. Its values are starting choices: keep a setting that already works unless the user
 selects the change, and treat every budget as a proposal until measured on a device.
-**Last verified: October 2026** (Unity 6.7 docs era); re-check deprecations and store rules after that.
+**Last verified: October 2026** (Unity 6.7 docs era, upstream) — this branch targets **2022.3 LTS**; re-check deprecations and store rules against the installed 2022.3 docs.
 
 ## Operating rules
 
@@ -23,7 +23,7 @@ selects the change, and treat every budget as a proposal until measured on a dev
   After confirmation, use the Editor's Player Settings, Quality, and Build Profiles windows and
   importer Inspectors as the manual route; install no bridge merely to complete this guide.
 - Confirm each API signature against the installed Editor version before calling it; the names
-  below are the Unity 6 shape and move between releases.
+  below are the 2022.3 shape and move between releases.
 - Record a check as **Not verified** when its module, host OS, or device is missing. A build that
   succeeds on one platform proves nothing about another.
 
@@ -81,7 +81,7 @@ the default becomes a recommended answer that still goes through stages 2 to 4.
 |---|---|
 | Which targets ship? | Windows x64 and macOS Apple Silicon |
 | Support Windows Arm64? | No. It has no Vulkan, only GPU lightmapping, and needs Arm64 builds of every native dependency |
-| Support Intel Macs? | No. Unity deprecates Intel Mac from 6.6; Intel or Universal output is possible only on Unity 6.7 LTS or earlier |
+| Support Intel Macs? | Yes — Unity 6 deprecates Intel Mac builds (6.6+); on 2022.3 Intel and Universal macOS outputs remain supported |
 | Minimum Windows/macOS release, GPU, CPU, RAM? | No default; record unanswered values as "unspecified" |
 | Need D3D12-only features (for example ray tracing)? | No: D3D11 baseline |
 | Frame budget? | 60 fps (16.7 ms) on the minimum device |

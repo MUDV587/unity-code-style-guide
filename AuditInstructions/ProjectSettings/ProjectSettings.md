@@ -1,6 +1,6 @@
 > How it works: give this URL to your agent, for example "Review my Unity project's settings
 > against this document". The agent audits first and recommends changes; you pick which to carry
-> over, and nothing changes until you confirm. Works on any Unity 6 project. Human overview:
+> over, and nothing changes until you confirm. Works on any Unity 2022.3 project. Human overview:
 > [readme](README.md).
 
 # Project settings review and setup (agent instructions)
@@ -8,8 +8,7 @@
 Check a Unity project's core settings against a safe starting policy, report the gaps, and, only
 when the user approves, apply them. This document is self-contained. Values are starting choices,
 not performance claims: keep a setting that already works unless the user selects the change.
-**Last verified: October 2026**, against the Unity 6.7 beta manual. That manual has no 6.7
-"what's new" or upgrade page yet, so re-check rows marked **6.6+** when 6.7 ships.
+**Last verified: October 2026**, against the Unity 6.7 beta manual (upstream). This branch (`Unity2022`) retargets the guide to **Unity 2022.3 LTS**; version-sensitive rows are adapted but not re-verified — check them against your installed Editor.
 
 ## Operating rules
 
@@ -19,7 +18,7 @@ not performance claims: keep a setting that already works unless the user select
   `QualitySettings`, `GraphicsSettings`, `SerializedObject`) or the Project Settings window. Never
   hand-edit `ProjectSettings/*.asset` or `.meta` files.
 - Read every value before changing it and read it back after saving. Confirm each API name against
-  the installed Editor; those below are the Unity 6 shape.
+  the installed Editor; those below are the 2022.3 shape.
 - Continue independent read-only audit with existing edits preserved. Establish an attributable
   baseline or isolated checkout before confirmed changes; resolve conflicting edits before execution.
 - Preserve occupied layer, tag, and sorting-layer slots, existing quality entries, and assigned
@@ -62,8 +61,8 @@ finding during those steps becomes a new recommendation and returns to stage 3.
 
 Record (this is the audit input), in one table (setting, current value):
 
-- Editor version from `ProjectSettings/ProjectVersion.txt`. This document targets Unity 6 (6000.x).
-  On an older Editor, report mismatches and apply nothing.
+- Editor version from `ProjectSettings/ProjectVersion.txt`. This document targets Unity 2022.3 LTS.
+  On a different Editor line, report mismatches and apply nothing.
 - Render pipeline, the URP package version, and the installed Input System package.
 - The current value of every row in step 3, and the Enter Play Mode setting in Project Settings >
   Editor > Enter Play Mode Settings > **When entering Play Mode**.
@@ -99,17 +98,17 @@ Apply only the items confirmed in stage 4; every other row is reported. Mark eac
 
 | Setting | Target | Read / set via | Condition |
 |---|---|---|---|
-| Asset Serialization Mode | Force Text | `EditorSettings.serializationMode` | Unity 6.7's default; makes diffs and merges readable |
-| Version Control Mode | Visible Meta Files | `VersionControlSettings.mode` | Unity 6.7's default. Commit every `.meta` with its asset |
+| Asset Serialization Mode | Force Text | `EditorSettings.serializationMode` | A common default; makes diffs and merges readable |
+| Version Control Mode | Visible Meta Files | `VersionControlSettings.mode` | A common default. Commit every `.meta` with its asset |
 | Source control hygiene | `Library/`, `Temp/`, `Obj/`, `Logs/`, `UserSettings/` ignored; `Assets`, `Packages/manifest.json`, `Packages/packages-lock.json`, `ProjectSettings` committed | `.gitignore` ([version control guide](../VersionControl/README.md)) | Do not ignore `.meta` files |
-| Input handling | Input System Package (New) | `Active Input Handling` in Player Settings; no public property, so use `SerializedObject` on `ProjectSettings.asset` or the window | Changing it needs an Editor restart. Unity documents the legacy Input Manager as deprecated. Choose Both only for a project mid-migration |
-| API Compatibility Level | .NET Standard 2.1 | `PlayerSettings.SetApiCompatibilityLevel(NamedBuildTarget, …)` | .NET Framework only when a dependency requires it. Unity 6.7 also lists a CoreCLR (Experimental) scripting backend; do not select it as a baseline |
-| Render pipeline | URP asset assigned as the default and in every quality level | `GraphicsSettings.defaultRenderPipeline`, `QualitySettings.renderPipeline` per level | URP 17.7 ships with 6.7; the Built-in pipeline is deprecated. Keep a working HDRP or Built-in project as it is |
+| Input handling | Input System Package (New) | `Active Input Handling` in Player Settings; no public property, so use `SerializedObject` on `ProjectSettings.asset` or the window | Changing it needs an Editor restart. The legacy Input Manager is deprecated in practice. Choose Both only for a project mid-migration |
+| API Compatibility Level | .NET Standard 2.1 | `PlayerSettings.SetApiCompatibilityLevel(NamedBuildTarget, …)` | .NET Framework only when a dependency requires it |
+| Render pipeline | URP asset assigned as the default and in every quality level | `GraphicsSettings.defaultRenderPipeline`, `QualitySettings.renderPipeline` per level | Keep a working HDRP or Built-in project as it is; URP 14 ships with 2022.3 |
 | Color space | Linear | `PlayerSettings.colorSpace` | Gamma only for a deliberate legacy-device target |
 | Enter Play Mode | See "Reload policy" | `EditorSettings.enterPlayModeOptionsEnabled`, `enterPlayModeOptions` | Verify against the dropdown after setting |
-| Burst and jobs | Use through the installed API | Read the resolved package list | **6.6+:** Unity reports Burst as a built-in module with no package install. Earlier: `com.unity.burst`. Do not assume; read the resolved list |
-| Batching | Rely on the SRP Batcher | Pipeline settings | **6.6+:** dynamic batching is obsolete |
-| Compile-time symbols | Avoid `UNITY_64` and `DEVELOPMENT_BUILD` in new code | Search owned code | **6.6+:** both are deprecated, replaced by the Managed Code Variant setting; removal is planned for 6.8 |
+| Burst and jobs | Use through the installed API | Read the resolved package list | `com.unity.burst` is included in typical 2022.3 manifests; new projects get it. Do not assume — read the resolved list |
+| Batching | Rely on the SRP Batcher | Pipeline settings | Check SRP Batcher compatibility for the pipeline in use |
+| Compile-time symbols | Avoid `UNITY_64` and `DEVELOPMENT_BUILD` in new code | Search owned code | Legacy symbols; Unity 6 deprecates them for Managed Code Variant. Harmless on 2022.3 |
 | Packages | Manifest and lockfile committed; selected packages only | Package Manager Client API | Read the completed resolved list; never float versions |
 | Tags, layers, sorting layers | Add only names the game uses | `TagManager` through `SerializedObject` | Never reuse or renumber an occupied slot |
 | Scenes in the build | Only real scenes, enabled | `EditorBuildSettings.scenes` or Build Profiles | |
@@ -121,14 +120,16 @@ Do not duplicate them here.
 
 ### Reload policy
 
-**What changed.** Unity's 6.7 manual says the Editor does not reload the scripting domain on
-entering Play mode by default, and recommends leaving it off for iteration speed and to prepare for
-the CoreCLR runtime, which has no domain reload. The 6.6 release notes say the **new-project** default
-changed from **Reload Domain and Scene** to **Reload Scene only**. Whether an *existing* project
-keeps its old saved value is not stated, so read the actual setting.
+**What it means and why it matters.** On entering Play mode the Editor does not have to reload the
+scripting domain (it re-compiles) or the scene. Skipping either speeds up iteration; skipping the
+domain reload means static fields and static event subscribers survive between Play sessions, so
+session state must be reset in code. The default differs by Editor version and template — read the
+actual dropdown instead of assuming (Unity 6.6 changed the documented new-project default to
+**Reload Scene only**; earlier versions, including 2022.3, may keep **Reload Domain and Scene** —
+verify on the installed Editor).
 
 **The dropdown** (Project Settings > Editor > Enter Play Mode Settings > **When entering Play
-Mode**): Reload Domain and Scene · **Reload Scene only (the default)** · Reload Domain only ·
+Mode**): Reload Domain and Scene · Reload Scene only · Reload Domain only ·
 Do not reload Domain or Scene. Scripts set it with `EditorSettings.enterPlayModeOptionsEnabled` and
 the `EnterPlayModeOptions` flags (`DisableDomainReload`, `DisableSceneReload`, `None`); the manual does
 not map the dropdown to those flags, so set it, then read the dropdown back.
@@ -139,21 +140,19 @@ must be reset in code.
 
 **The policy**
 
-1. For a new project on 6.6+, **Reload Scene only** is the documented starting default: domain
-   reload off, scene reload on. For an existing project or older Unity 6 Editor, retain the observed
-   saved policy during audit; propose a change only after evaluating reset behavior for that version.
-   Scene reload off changes teardown/restoration behavior and requires a deliberate project contract.
-2. Audit mutable statics and static events (step 1, or the lens above for a full audit). In Unity 6.5+ (the attribute is documented from 6.5), mark each with
-   `[AutoStaticsCleanup]` (events, delegates, collections of user objects, Unity object references)
-   or `[NoAutoStaticsCleanup]` only for intentional cross-session persistence (for example unique-ID
-   generators or safe cached UI resources), from `Unity.Scripting.LifecycleManagement`. The latter
-   opts out of reset; session counters still need resetting. Types containing auto-cleaned fields
-   must be `partial` (including containing types when required by the installed generator). Verify
-   code generation and analyzer configuration; the analyzer reports `UAL0010` to `UAL0014`. For
-   assignable fields the generator re-evaluates the initializer; supported `readonly` collections
-   retain their instance and are cleared. Static constructors are not rerun.
+1. For a new 2022.3 project, decide the reload policy after the static-state audit, not from a
+   default printed in any document — the safe starting policy depends on the Editor/template and the
+   project's static state. For an existing project, retain the observed saved policy during audit;
+   propose a change only after evaluating reset behavior. Scene reload off changes
+   teardown/restoration behavior and requires a deliberate project contract.
+2. Audit mutable statics and static events (step 1, or the lens above for a full audit). On Unity 6.5+
+   the `[AutoStaticsCleanup]` attribute from `Unity.Scripting.LifecycleManagement` exists (events,
+   delegates, collections of user objects, Unity object references); on **2022.3 — the target of this
+   branch — it does not exist**. `[NoAutoStaticsCleanup]` opts out of reset for intentional
+   cross-session persistence. Types containing auto-cleaned fields must be `partial`, and `readonly`
+   collections retain their instance and are cleared. The analyzer reports `UAL0010` to `UAL0014`.
 3. Code that runs in Edit mode must reset on entering Play mode, because exit-time cleanup cannot be
-   relied on there. On Editors before 6.5, reset with a `[RuntimeInitializeOnLoadMethod(
+   relied on there. On 2022.3, reset with a `[RuntimeInitializeOnLoadMethod(
    RuntimeInitializeLoadType.SubsystemRegistration)]` method and unsubscribe static handlers.
 4. If the audit finds many unprotected statics, set **Reload Domain and Scene** as a stopgap and
    record the follow-up. Say so in the report; do not leave it silent.
@@ -200,12 +199,10 @@ decision" block at the top.
 
 ## References
 
-- [Configuring how Unity enters Play mode](https://docs.unity3d.com/Manual/configurable-enter-play-mode.html)
-- [Enter Play mode without domain reload](https://docs.unity3d.com/Manual/domain-reloading.html)
-- [What's new in Unity 6.6](https://docs.unity3d.com/Manual/WhatsNewUnity66.html)
-- [Upgrade to Unity 6.6](https://docs.unity3d.com/Manual/UpgradeGuideUnity66.html)
-- [Editor settings reference](https://docs.unity3d.com/Manual/class-EditorManager.html)
-- [EditorSettings.enterPlayModeOptions](https://docs.unity3d.com/ScriptReference/EditorSettings-enterPlayModeOptions.html)
-- [Input System installation](https://docs.unity3d.com/Packages/com.unity.inputsystem@latest/index.html?subfolder=/manual/Installation.html)
+- [Configuring how Unity enters Play mode](https://docs.unity3d.com/2022.3/Documentation/Manual/configurable-enter-play-mode.html)
+- [Enter Play mode without domain reload](https://docs.unity3d.com/2022.3/Documentation/Manual/domain-reloading.html)
+- [Editor settings reference](https://docs.unity3d.com/2022.3/Documentation/Manual/class-EditorManager.html)
+- [EditorSettings.enterPlayModeOptions](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/EditorSettings-enterPlayModeOptions.html)
+- [Input System installation](https://docs.unity.com/Packages/com.unity.inputsystem@latest/index.html?subfolder=/manual/Installation.html)
 
-Links follow current documentation; select the installed Editor/package version before applying an API or default.
+Links follow current documentation — select the installed Editor/package version before applying an API or default. The Unity 6 references (what's new in 6.6, the 6.6 upgrade guide, CoreCLR backend) live on the `Unity6000` branch of this fork.

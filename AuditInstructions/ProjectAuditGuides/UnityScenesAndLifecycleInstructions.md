@@ -4,7 +4,8 @@ Load for startup, scene flow, enable/disable behavior, asynchronous work, destro
 repeated Play sessions. Apply the [shared evidence standard](ProjectReview.md#evidence-standard). Use the
 project's lifecycle and composition decisions; inspect live state through `unity:unity-cli` (or project
 tooling) when needed. This lens owns pool and async staleness and cancellation checks.
-**Last verified: October 2026.**
+**Last verified: October 2026.** **Unity 2022.3 adaptations in this branch are not re-verified — check
+version-relevant claims against the installed Editor.**
 
 ## Establish lifetime ownership
 
@@ -36,18 +37,18 @@ A bootstrap scene is one valid choice; it is not mandatory for every game.
 - ⚠️ Cancellation of a wait does not necessarily cancel its underlying scene/asset operation. Establish
   what completes, who releases the result, and who restores transition state on every exit path.
   The release path itself is checked in [Assets](UnityAssetsAndMemoryInstructions.md).
-- ⚠️ A Unity `Awaitable` instance is pooled and should be awaited only once: the Awaitable
-  documentation says awaiting more than once is never safe and can throw or deadlock. Shared
-  completion needs a deliberately reusable representation. Return to the main thread before accessing
-  Unity objects.
-- ⚠️ Observe errors at the operation's owner, including fire-and-forget entry points. Do not assume an
-  un-awaited `Awaitable` surfaces its exception: the Awaitable documentation does not say it does, so
-  verify exception behavior in the installed version.
+- ⚠️ A Unity `Awaitable` instance exists only on Unity 6 — it is pooled and should be awaited only
+  once, and awaiting more than once can throw. On 2022.3 there is no `Awaitable`; use coroutines
+  (start/stop on ownership) or a typed async path (e.g. Addressables' `Handle.Task`). Return to the
+  main thread before accessing Unity objects.
+- ⚠️ Observe errors at the operation's owner, including fire-and-forget entry points. Do not assume
+  an un-awaited `Awaitable` (or discarded coroutine) surfaces exceptions/errors visibly — give the
+  owner a catch/log path or use `LogAssert`-checked tests to prove it.
 
-The [continuation manual](https://docs.unity3d.com/Manual/async-awaitable-continuations.html)
-now describes thread switching as local to the current async method, with caller-thread resumption.
-Older Unity manuals describe different Awaitable continuation behavior. Verify the installed engine
-and actual continuation path, especially after explicit thread switches or context suppression;
+The Unity 6 [continuation manual](https://docs.unity3d.com/Manual/async-awaitable-continuations.html)
+describes thread switching as local to the current async method, with caller-thread resumption —
+it does not apply to 2022.3. On 2022.3, verify the continuation path of the typed async
+destination you selected, especially after explicit thread switches or context suppression;
 require a main-thread switch where needed rather than after every await. Background work also needs
 an application-exit owner when component destruction alone does not end it.
 
@@ -81,8 +82,8 @@ Editor does not perform a domain reload on entering Play mode by default, and th
 default as Reload Scene only (domain reload off) and owns the policy. With domain reload off, static
 state survives between Play sessions, so a mutable static or static event is a finding when its state
 can leak into the next Play and no documented reset covers it. Documented resets are
-`[AutoStaticsCleanup]`/`[NoAutoStaticsCleanup]` (documented from Unity 6.5) and the
-`[OnEnteringPlayMode]`/`[OnExitingPlayMode]` lifecycle attributes that the manual names. A project that
+`[AutoStaticsCleanup]`/`[NoAutoStaticsCleanup]` (documented from Unity 6.5 — not available on 2022.3)
+and the `[OnEnteringPlayMode]`/`[OnExitingPlayMode]` lifecycle attributes that the manual names. A project that
 documents `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` resets is
 following a valid policy; do not report it as a conflict. The
 [`SubsystemRegistration` reference](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.SubsystemRegistration.html)
@@ -103,7 +104,7 @@ and a second Play with the project's reload settings. Include destruction/cancel
 is pending and pool reuse when applicable. Verify registry/subscriber counts return to the intended
 baseline; inspect asset ownership with [Assets](UnityAssetsAndMemoryInstructions.md).
 
-Technical reference: [Awaitable introduction](https://docs.unity3d.com/Manual/async-awaitable-introduction.html).
+Technical reference (Unity 6 only): [Awaitable introduction](https://docs.unity3d.com/Manual/async-awaitable-introduction.html).
 Match the reference to the installed engine version when implementing a fix.
 
 Scene placement reference: [Object.Instantiate overloads](https://docs.unity3d.com/ScriptReference/Object.Instantiate.html).

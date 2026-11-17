@@ -1,5 +1,21 @@
 # Change log
 
+## 2026-11-17 — Fork: Unity 2022.3 LTS line
+
+- `UnityTechStack.md`: intended starter line is now **Unity 2022.3 LTS**. Async baseline: coroutines (no `Awaitable` on 2022.3); Enter Play Mode decision documented for 2022.3 (`SubsystemRegistration` resets — `[AutoStaticsCleanup]` does not exist before 6.6-era editors)
+- API baseline notes for 2022.3: `FindObjectsOfType` stays the documented call; URP 14 has no Render Graph; UXML custom elements use `UxmlFactory`/`UxmlTraits`; no runtime data binding — views populate manually; `linearVelocity`/`linearDamping` are Unity 6 renames — do not use them
+- `UnityStyleGuide.md`: "Async & Awaitable usage" → "Async & coroutine usage"; member-order bullet (access level, const → static readonly → static → instance with `[SerializeField]` first, constructors after fields); static-events/domain-reload guidance retargeted to 2022.3 (`RuntimeInitializeOnLoadMethod(SubsystemRegistration)`)
+- ScriptTemplates: `Awaitable Operation` rewritten and renamed to **`Coroutine Operation`** (GUID preserved), with its PlayMode test rewritten as `CoroutineOperationTests.cs.txt` and `inventory.json` updated; README/`SetupScriptTemplates.md`/`Tools~/README.md` retargeted — Static Event template marked Unity 6.5+ only and deferred on 2022.3; NetworkBehaviour row → NGO 1.x
+- Audit lenses (`UnityScenesAndLifecycleInstructions.md`): async staleness/cancellation/error-ownership guidance retargeted to coroutines/`Handle.Task`; Unity 6-only manual pages are kept but labeled as Unity 6 references
+- ProjectSettings (guide, readme, recheck): retargeted to 2022.3 — defaults guidance no longer asserts Unity 6.6/6.7 behaviour; reload policy documents 2022.3 reality (`[RuntimeInitializeOnLoadMethod(SubsystemRegistration)]`; `[AutoStaticsCleanup]` noted as Unity 6.5+ only); references point at the 2022.3 manual; recheck checklist rewritten for 2022.3 verification
+- BuildSettings (Desktop/Mobile): retargeted to 2022.3 (Intel Macs supported until Unity 6; OpenGL ES 3.0 floor; Android 15+ 16 KB guidance kept store-facing)
+- PackageInstaller: Cinemachine remains a registry package on 2022.3 (core only from Unity 6.6); references → 2022.3 manual
+- Setup* raw URLs now point at the fork's `Unity2022` branch; "Last verified" stamps carry explicit fork annotations — **no 2022.3 Editor run was executed**, all 2022.3 claims/adaptations are documented as not re-verified unless stated
+- `Tools/validate_all.py`: intended-version assertion now expects Unity 2022.3 on this branch
+- `Validation.md`: fork note added; fork re-verified the Roslyn naming intersections with the updated checker/fixtures (hand-run `dotnet format`, SDK 10.0.302 — Good 0, Bad 6 at lines 1/2/5/6/7/8)
+- `AGENTS.md` and `README.md`: fork branch map (Unity6000 = Unity 6 line / Unity2022 = this line)
+- Evidence archives (`replay_results_*.json`, `discipline_review_*.json`, `project_review_*.json`, `workflow_scenarios.json`), preset/scene/prefab YAML, and GUID-bearing files otherwise untouched
+
 ## 2026-11-17 — Fork: .NET Runtime naming standard
 
 - Restyled to the .NET Runtime team coding style: `_`camelCase private/internal instance fields, `s_`camelCase private/internal static fields (including static readonly), PascalCase constants at any accessibility (const implies static), PascalCase public/protected fields, `I`PascalCase interfaces, PascalCase local constants; Allman braces retained

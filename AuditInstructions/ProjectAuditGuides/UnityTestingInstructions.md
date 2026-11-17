@@ -67,6 +67,6 @@ Assembly interpretation belongs in [Assemblies](UnityAssemblyDefinitionsInstruct
 scenarios in [Persistence](UnityPersistenceInstructions.md), and async ownership in
 [Scenes](UnityScenesAndLifecycleInstructions.md).
 
-Technical reference: [EditMode and PlayMode tests](https://docs.unity.com/en-us/engine/6000.7/manual/programming-environment/test-framework-introduction/getting-started/edit-mode-vs-play-mode-tests)
+Technical reference: [EditMode and PlayMode tests](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/getting-started/edit-mode-vs-play-mode-tests)
 Check the project's installed Editor and Test Framework versions before changing test assembly or
 async setup.

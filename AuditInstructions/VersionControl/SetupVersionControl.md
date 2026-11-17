@@ -8,10 +8,11 @@
 Install a Unity `.gitignore` and `.gitattributes` into an existing project, then verify them. This
 document is self-contained. It does not commit, push, rewrite history, or untrack files without the
 user's approval, and it changes no Unity setting. **Last verified: October 2026** (Git 2.54, Git LFS
-3.8.0, Unity CLI 1.0.0-beta.13, Unity 6000.7.0b4 and 6000.6.2f1).
+3.8.0, Unity CLI 1.0.0-beta.13, Unity 6000.7.0b4 and 6000.6.2f1) — **not re-verified on 2022.3**; the
+Git content is version-agnostic.
 
 Source (replace `main` with a commit SHA for a repeatable run):
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/AuditInstructions/VersionControl/`
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/AuditInstructions/VersionControl/`
 Two files: `Unity.gitignore` and `Unity.gitattributes`.
 
 ## Operating rules
@@ -119,7 +120,7 @@ Only the items confirmed in stage 4 are installed.
    `.git/config`, then proves it with a test merge. The driver names an absolute Editor path, so it is
    **per clone** and each contributor runs it once. Run `--check` first. Without the CLI, report merge
    setup as **Not verified** and point to the manual route in the
-   [Unity manual](https://docs.unity.com/en-us/engine/6000.7/manual/get-started/project-configuration/version-control/smart-merge)
+   [Unity manual](https://docs.unity3d.com/2022.3/Documentation/Manual/get-started/project-configuration/version-control/smart-merge)
    (the tool is `Contents/Helpers/UnityYAMLMerge` in a macOS Editor and
    `Editor\Data\Tools\UnityYAMLMerge.exe` on Windows).
 5. **LFS hooks (if selected).** Run `git lfs install --local` once approved.

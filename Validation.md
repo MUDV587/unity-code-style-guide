@@ -1,8 +1,17 @@
 # Compatibility and validation
 
-The intended profile is [Unity 6.7](AgentsInstructions/UnityTechStack/UnityTechStack.md). This record distinguishes
-that choice from the exact prerelease Editor tested. It is not a guarantee for every 6000.7 patch,
-package upgrade, target platform, or copied project. Date: 2026-10-12.
+> **Fork note (Unity2022 branch).** This branch retargets the kit for **Unity 2022.3 LTS** (see
+> [UnityTechStack.md](AgentsInstructions/UnityTechStack/UnityTechStack.md)). The evidence below is the
+> upstream Unity 6.7 record — it does not describe this branch's line, and it must not be read as
+> validation of 2022.3. Adaptations made for 2022.3 (coroutines replacing `Awaitable`, `UxmlFactory`/
+> `UxmlTraits`, no runtime data binding, NGO 1.x row, URP 14 notes, renamed Coroutine Operation template,
+> `#if UNITY_6000_0_OR_NEWER` no-ops in the Template fork, the restyled `.editorconfig`/fixtures and the
+> `check_naming.py` Roslyn verification) are **not executed against a 2022.3 Editor** unless a section
+> below says otherwise. The `Unity6000` branch of this fork carries the upstream Unity 6 line unchanged.
+
+The intended profile is [Unity 2022.3 LTS](AgentsInstructions/UnityTechStack/UnityTechStack.md). This record distinguishes
+that choice from the exact prerelease Editor tested. It is not a guarantee for every 2022.3 patch,
+package upgrade, target platform, or copied project. Date: 2026-10-12 (upstream record).
 
 ## Fresh-agent discipline pressure tests — 2026-10-26
 
@@ -23,7 +32,7 @@ fixes. Initial cases remain attached to the initial sources; corrective results 
 | Corrective behavioral decisions | Passed | 16 cases across two new fresh sessions; valid and defective examples for all eight reader findings |
 | Checklist rendering regression | Passed | Local validator first rejected six detached row sections; after repair all topic Markdown checks pass, plus five positive/negative parser tests |
 | Full repository and required .NET gates | Passed | `python3 -B -u AuditInstructions/Tools/validate_all.py --require-dotnet` with host access: 84 Markdown files, 538 local links/anchors, 75 unique GUIDs, seven topic validators, 14 workflow tests, 22 CI fixture projects, installation/four negative probes and real .NET style gates |
-| Real Roslyn naming intersections | Passed | `python3 -B -u AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py` with SDK 10.0.302: good fixture 0 diagnostics; bad fixture six expected IDE1006 diagnostics |
+| Real Roslyn naming intersections | Passed | Upstream: `python3 -B -u AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py` with SDK 10.0.302 — good fixture 0 diagnostics; bad fixture six expected IDE1006 diagnostics. **The fork re-verified this** with the updated `.editorconfig` and rewritten fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302): good fixture 0, bad fixture 6 at lines 1, 2, 5, 6, 7, 8 — naming rules hold |
 | Replay archive integrity and source freshness | Passed | 54 unique case IDs, complete input/response/grade sets, false project-write authorization, both snapshots hash-verified; corrected snapshot matches current guide/tool sources |
 | Final whitespace | Passed | `git diff --check` after recording results |
 | Unity/runtime/device/network behavior | Not verified | Fictional decision evidence only; no target Editor, Unity tests, player, device or network-simulation run |
@@ -630,7 +639,7 @@ Not verified: the post-fix document was not re-run through a third dry-run. Core
 |---|---|---|
 | Broken links | Fixed | 89 found; 88 rewritten by a layout mapping (old file location to new), 1 prose list edited by hand |
 | Repository validator | Passed | 67 Markdown files, 430 local links/anchors, 75 unique GUIDs, 6 folder validators |
-| Naming checker | Passed | `AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py`: 0 diagnostics on Good, 6 on Bad (expected) |
+| Naming checker | Passed | `AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py`: 0 diagnostics on Good, 6 on Bad (expected) — fork re-verified with the updated checker/fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302: same results) |
 | Project untouched | Passed | Railroad Tycoon status hash `97bbb1bf4278` unchanged |
 
 Not verified: raw GitHub URLs in five install guides (they resolve after the push). Pre-existing stale text outside the split: the README copy table still lists `SetupInstructions/`,

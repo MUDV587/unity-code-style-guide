@@ -6,10 +6,10 @@
 
 # Android and iOS mobile build setup (agent instructions)
 
-Configure the Android and iOS players of a URP project on Unity 6.7+. This document is
+Configure the Android and iOS players of a URP project on Unity 2022.3 LTS. This document is
 self-contained. Its values are starting choices: keep a setting that already works unless the user
 selects the change, and treat every budget as a proposal until measured on a physical device.
-**Last verified: October 2026.** Store rules change yearly, so re-check the linked Google Play and
+**Last verified: October 2026** (upstream, Unity 6.7 docs era — this branch targets 2022.3). Store rules change yearly, so re-check the linked Google Play and
 Apple pages before a release.
 
 ## Operating rules
@@ -27,7 +27,7 @@ Apple pages before a release.
 - Keep signing material out of the project and out of the report: keystores, passwords, and
   provisioning profiles stay in the user's secure storage. Ask the user to supply them at build time.
 - Confirm each API signature against the installed Editor version before calling it; the names
-  below are the Unity 6 shape and move between releases.
+  below are the 2022.3 shape and move between releases.
 - Record a check as **Not verified** when its module, host OS, or physical device is missing.
   Simulators and emulators do not establish performance, thermals, or driver behavior.
 
@@ -118,16 +118,16 @@ target, record **Already correct**; a row the user did not pick is **Skipped** a
 
 | Setting | Target | Set via | Condition |
 |---|---|---|---|
-| App icons | Adaptive icons only | Android Player Settings > Icons | Unity 6.6 removed Legacy and Round icon support |
+| App icons | Android 8+: Adaptive icons (Legacy/Round support removed in Unity 6.6 — still present on 2022.3) | Android Player Settings > Icons | Mobile platforms only; adaptive icon requires a foreground layer |
 | Target architectures | ARM64 only | `PlayerSettings.Android.targetArchitectures` | ARMv7 only when selected; Google Play requires 64-bit support alongside it |
 | Target API level | At least API 36 (Android 16) | `PlayerSettings.Android.targetSdkVersion` | New apps and updates on Google Play need it from 31 August 2026 (extensions to 1 November 2026 exist). Existing apps need at least API 35. [Check the requirement](https://developer.android.com/google/play/requirements/target-sdk) before release |
 | Minimum API level | The user's answer | `PlayerSettings.Android.minSdkVersion` | Never below the Editor's supported floor |
 | Release output | Android App Bundle (`.aab`) | `EditorUserBuildSettings.buildAppBundle` = true | Google Play requires it; use `.apk` for development and side-loading |
-| Graphics APIs | Vulkan first, OpenGL ES 3.1 as fallback | `PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, …)` | Unity 6.6 raised the minimum OpenGL ES version from 3.0 to 3.1 (upgrade guide). Test both on the low-end device. Use Vulkan device filter lists when a driver misbehaves |
+| Graphics APIs | Vulkan first, OpenGL ES 3.0 or 3.1 as fallback | `PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, …)` | Unity 6.6 raised the minimum OpenGL ES version from 3.0 to 3.1; 2022.3 supports ES 3.0 |
 | Optimized Frame Pacing | On | `PlayerSettings.Android.optimizedFramePacing` | With it on, Unity can clamp `targetFrameRate` to a divisor of the refresh rate (for example 25 → 20 on 60 Hz); pick targets that divide 60 |
 | Texture compression | ASTC | Player Settings Android texture compression | ETC2 only when the minimum device lacks ASTC |
 | Application entry point | Keep the project's current entry; ship a single entry in store builds | Android Player Settings | |
-| 16 KB page size | Every native library aligned for 16 KB pages | Unity 6 supports it; inspect the built bundle (APK Analyzer) | Play rejects apps targeting Android 15+ that fail it. If a rejection persists on a supported Editor, update the `com.unity.appbundle` package (it updates bundletool) |
+| 16 KB page size | Every native library aligned for 16 KB pages | Unity 2022.3 Android 15+ support; inspect the built bundle (APK Analyzer) | Play rejects apps targeting Android 15+ that fail it. If a rejection persists on a supported Editor, update the `com.unity.appbundle` package (it updates bundletool) |
 | Signing | Release keystore from the user's secure storage; Play App Signing for the upload key | `PlayerSettings.Android.useCustomKeystore` and keystore fields, supplied at build time | |
 
 ### iOS

@@ -10,13 +10,16 @@ Install selected Strategy scene templates (starting scenes offered under **File 
 existing Unity project. This document is self-contained. It installs template assets and one small
 runtime assembly; it changes no project setting, build scene list, layer, or package. **Last verified:
 October 2026** (Unity 6000.7.0b4 with URP 17.7.0 and Input System 6.7.0; Unity 6000.6.2f1 with URP
-17.6.0 and Input System 1.20.0).
+17.6.0 and Input System 1.20.0). **This fork's `Unity2022` branch is not re-verified on 2022.3** — the
+assets reference built-in URP shaders (stable GUIDs) and the Input System API is unchanged across
+1.x, so they are expected to work with URP 14 / Input System 1.x, but say so explicitly if you ship
+them.
 
 Source (replace `main` with a commit SHA for a repeatable run):
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/AuditInstructions/SceneTemplates/`
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/AuditInstructions/SceneTemplates/`
 Every path in the file table below is that base plus the path, and each has a `<path>.meta` beside
 it (folders too). Binary files (`.png`) must be downloaded as bytes. The license is
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/LICENSE`.
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/LICENSE`.
 
 ## Operating rules
 

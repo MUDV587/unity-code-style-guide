@@ -36,7 +36,7 @@ Use the following conventions.
   - [Avoid nesting if statements](#avoid-nesting-if-statements)
   - [Managing string allocations](#managing-string-allocations)
   - [Collection type selection](#collection-type-selection)
-  - [Async & Awaitable usage](#async--awaitable-usage)
+  - [Async & coroutine usage](#async--coroutine-usage)
   - [Scriptable Objects](#scriptable-objects)
   - [Animation parameters, layers, tags, sorting layers, and input action names](#animation-parameters-layers-tags-sorting-layers-and-input-action-names)
   - [Debugging](#debugging)
@@ -349,27 +349,32 @@ private void OnDisable()
 ```
 
 #### Static events and domain reload
-- ℹ️ New projects from Unity 6.6 leave domain reload off when entering Play mode, so static fields and
-  the subscribers of a `static event` survive from one Play session to the next. State that should
-  start fresh must be reset in code.
-- ✅ Mark each mutable static, including a `static event`, with `[AutoStaticsCleanup]` from
-  `Unity.Scripting.LifecycleManagement`, and make the type `partial`. Use `[NoAutoStaticsCleanup]` for
-  values that must persist, such as ID counters or cached `GUIStyle` objects. Unity's analyzer warns
-  (`UAL0010`, `UAL0013`) about static state that has neither.
-- ✅ Before Unity 6.6, reset the field in a method marked
+- ℹ️ New projects that disable domain reload on entering Play mode (a common new-project default on
+  Unity 2022.3) leave static fields and the subscribers of a `static event` alive across sessions.
+  State that should start fresh must be reset in code.
+- ✅ On Unity 2022.3, reset each mutable static with a method marked
   `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]`.
+- ℹ️ On Unity 6.6+, `[AutoStaticsCleanup]` from `Unity.Scripting.LifecycleManagement` exists — mark each
+  mutable static, including a `static event`, with it (and make the type `partial`).
+  Use `[NoAutoStaticsCleanup]` for values that must persist, such as ID counters or cached `GUIStyle`
+  objects. Unity's analyzer warns (`UAL0010`, `UAL0013`) about static state that has neither.
 - ✅ Still unsubscribe instance handlers in `OnDisable`; cleanup of the static field does not remove
   subscriptions you made from objects that are still alive.
 - ℹ️ See the [reload policy](../../AuditInstructions/ProjectSettings/ProjectSettings.md#reload-policy) for how
   the Editor setting and this attribute work together.
 
 ```csharp
-using Unity.Scripting.LifecycleManagement;
+using UnityEngine;
 
-public static partial class GameSignals
+public static class GameSignals
 {
-    [AutoStaticsCleanup]
     public static event Action SessionStarted;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        SessionStarted = null;
+    }
 }
 ```
 
@@ -862,30 +867,33 @@ public class EnemyRegistry : MonoBehaviour
 }
 ```
 
-## Async & Awaitable usage
-- ✅ Use the `Awaitable` API (Unity 6 and later) with async/await for timed delays, sequencing, or
-  asynchronous workflows that don't require per-frame iteration. This is cleaner and more readable
-  than coroutines.
-- ✅ Name async methods with the `Async` suffix (e.g., `OpenDoorAsync`) and coroutines with the `Co`
-  suffix (e.g., `LoadAssetsCo`) to clearly distinguish them.
+## Async & coroutine usage
+Unity 2022.3 has no `Awaitable` (that is a Unity 6 API). Coroutines are the standard for simple
+delays and sequences; for typed async work choose a path that fits the operation (e.g. Addressables'
+`Handle.Task`, which is a real .NET task awaitable on 2022.3) and don't mix approaches.
+- ✅ Use coroutines for simple timed delays, sequencing, and frame-coupled work.
+- ✅ Give coroutines the `Co` suffix (e.g., `LoadAssetsCo`) and async methods the `Async` suffix.
 - ✅ Use PascalCase and verb-based names for both async and coroutine methods.
-- ❌ Do not mix `Awaitable` and coroutines within the same operation — choose one approach per workflow.
-- ✅ Take a `CancellationToken` and guard continuations. After an `await`, the object may have been
-  destroyed: `if (this == null || !isActiveAndEnabled) return;`
-- ⚠️ Avoid `async void` except where a callback requires it. Observe exceptions at the operation owner;
-  an ignored `Awaitable` can retain an exception without reporting it. See the
-  [lifecycle audit](../../AuditInstructions/ProjectAuditGuides/UnityScenesAndLifecycleInstructions.md#async-cases-that-basic-null-checks-miss).
+- ❌ Do not mix coroutines and async/await within the same operation — choose one approach per workflow.
+- ✅ Keep async work cancelable where it can outlive its owner. A plain `CancellationToken` (e.g. one
+  created per operation and cancelled in `OnDisable`/`OnDestroy`) is the 2022.3-friendly pattern:
+  `if (this == null || !isActiveAndEnabled) return;` guards continuations after any wait — the object
+  may have been destroyed by then.
+- ⚠️ Avoid `async void` except where a callback requires it. Any exception thrown in `async void`
+  propagates to the synchronization context and can tear down the Editor — observe exceptions at the
+  operation owner. See the
+  [lifecycle audit](../../AuditInstructions/ProjectAuditGuides/UnityScenesAndLifecycleInstructions.md#destroyed-object-checks).
 - ⚠️ Cache suitable coroutine waits to avoid repeated allocation; allocation churn is not itself a leak.
 
 ```csharp
-public async Awaitable OpenDoorAsync(CancellationToken token)
+private IEnumerator OpenDoorCo()
 {
     Debug.Log("Door opening...");
 
-    await Awaitable.WaitForSecondsAsync(2f, token);
+    yield return new WaitForSeconds(2f);
 
     // The object may have been destroyed while we were waiting
-    if (this == null || !isActiveAndEnabled) return;
+    if (this == null || !isActiveAndEnabled) yield break;
 
     Debug.Log("Door opened!");
 }
@@ -904,20 +912,18 @@ private IEnumerator LoadAssetsCo()
     Debug.Log("All assets loaded!");
 }
 
-// The message entry point observes errors from its owned operation.
-private async void Start()
+// Fire-and-forget entry points must own their outcome — don't let a discard swallow errors.
+private void StartLoad()
 {
-    try
+    _loadHandle = StartCoroutine(LoadAssetsCo());
+}
+
+private void OnDisable()
+{
+    if (_loadHandle != null)
     {
-        await OpenDoorAsync(destroyCancellationToken);
-    }
-    catch (OperationCanceledException)
-    {
-        // Destruction cancels this operation intentionally.
-    }
-    catch (Exception exception)
-    {
-        Debug.LogException(exception, this);
+        StopCoroutine(_loadHandle);
+        _loadHandle = null;
     }
 }
 ```

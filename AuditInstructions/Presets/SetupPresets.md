@@ -8,12 +8,12 @@
 
 Install selected import presets into an existing Unity project and, only when the user asks,
 apply them to existing assets or register them as default import rules. This document is
-self-contained; it fetches the preset files from the source below. **Last verified: October 2026.**
+self-contained; it fetches the preset files from the source below. **Last verified: October 2026** (upstream; preset YAML and the `Preset` API are Editor-version agnostic — not re-verified on 2022.3).
 
 Source (replace `main` with a commit SHA for a repeatable run):
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/AuditInstructions/Presets/`
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/AuditInstructions/Presets/`
 Each preset is two files, `<Role>/<Name>.preset` and `<Role>/<Name>.preset.meta`. The license is
-`https://raw.githubusercontent.com/krogh-jacobsen/unity-code-style-guide/main/LICENSE`.
+`https://raw.githubusercontent.com/MUDV587/unity-code-style-guide/Unity2022/LICENSE`.
 
 ## Operating rules
 

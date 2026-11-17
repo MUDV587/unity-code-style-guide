@@ -40,7 +40,7 @@ Start with many inexpensive rule checks, fewer integration checks, and a small n
 
 ## 3. Where Unity Test Framework and Test Runner fit
 
-**Unity Test Framework (UTF)** is the `com.unity.test-framework` package. It integrates NUnit with Unity execution. **NUnit** supplies test attributes, assertions, and fixture setup/cleanup; Unity adds support for frames and Editor-specific behavior. **Test Runner** is the Editor window used to discover, select, run, and inspect tests. Command-line execution uses the same testing system. [Unity testing introduction](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction)
+**Unity Test Framework (UTF)** is the `com.unity.test-framework` package. It integrates NUnit with Unity execution. **NUnit** supplies test attributes, assertions, and fixture setup/cleanup; Unity adds support for frames and Editor-specific behavior. **Test Runner** is the Editor window used to discover, select, run, and inspect tests. Command-line execution uses the same testing system. [Unity testing introduction](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction)
 
 ```mermaid
 flowchart LR
@@ -60,7 +60,7 @@ The runner executes the tests you wrote. You supply the acceptance criteria and 
 | PlayMode in the Editor | Runtime lifecycle, interactions across frames, runtime UI and physics | The shipped build on target hardware |
 | Tests in a built player | Platform and runtime behavior outside the Editor | The complete shipped experience and human usability |
 
-EditMode and PlayMode describe **execution environments**. They are separate from unit/integration scope. PlayMode can execute inside the Editor or on a target player; an Editor PlayMode run does not establish build-specific behavior. Player test builds are separate from ordinary release builds. [EditMode and PlayMode](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/getting-started/edit-mode-vs-play-mode-tests), [player testing](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/running-tests/workflow-run-playmode-test-standalone)
+EditMode and PlayMode describe **execution environments**. They are separate from unit/integration scope. PlayMode can execute inside the Editor or on a target player; an Editor PlayMode run does not establish build-specific behavior. Player test builds are separate from ordinary release builds. [EditMode and PlayMode](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/getting-started/edit-mode-vs-play-mode-tests), [player testing](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/running-tests/workflow-run-playmode-test-standalone)
 
 Railroad Tycoon runs substantial multi-train simulations in EditMode by advancing the simulation explicitly. A small check of a component's actual runtime lifecycle might instead need PlayMode.
 
@@ -70,12 +70,12 @@ EditMode does not promise a non-disruptive run. Fixtures can open scenes or wind
 
 1. Choose an appropriate Editor version and keep it consistent across developers and CI. Check `ProjectSettings/ProjectVersion.txt`.
 2. Inspect Package Manager for Test Framework and use a compatible version. Commit the project's package manifest and lock file so teammates resolve the same dependencies.
-3. Open **Window → General → Test Runner** and create an EditMode test assembly. Add a PlayMode assembly when a behavior needs runtime execution. The creation controls vary with Unity version. [Create a test assembly](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/getting-started/workflow-create-test-assembly)
+3. Open **Window → General → Test Runner** and create an EditMode test assembly. Add a PlayMode assembly when a behavior needs runtime execution. The creation controls vary with Unity version. [Create a test assembly](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/getting-started/workflow-create-test-assembly)
 4. Check assembly references. A test assembly should reference the production assembly it exercises and have test-framework references. Keep Editor-only dependencies out of runtime assemblies.
 5. Add one meaningful test. In Test Runner's EditMode tab, select it and choose **Run Selected**, then inspect its individual result. During development, temporarily make the expectation wrong, confirm that the test fails, then restore it. This checks discovery and that the assertion matters.
 6. Verify an ordinary player build as well as test execution before relying on the setup. NUnit and Editor-only dependencies should stay outside the normal shipped player.
 
-An **assembly definition** (`.asmdef`) gives scripts an explicit compiled assembly and dependency boundary. It is a common choice for new-project test assemblies. However, a custom asmdef cannot reference Unity's predefined `Assembly-CSharp`. Creating only a test asmdef can leave tests unable to access gameplay still in that predefined assembly. Plan production and test references together. An `Editor` folder nested under a runtime asmdef does not automatically become a separate Editor assembly. [Assembly reference limitations](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definitions-referencing.html), [assembly definitions](https://docs.unity3d.com/6000.0/Documentation/Manual/assembly-definitions.html)
+An **assembly definition** (`.asmdef`) gives scripts an explicit compiled assembly and dependency boundary. It is a common choice for new-project test assemblies. However, a custom asmdef cannot reference Unity's predefined `Assembly-CSharp`. Creating only a test asmdef can leave tests unable to access gameplay still in that predefined assembly. Plan production and test references together. An `Editor` folder nested under a runtime asmdef does not automatically become a separate Editor assembly. [Assembly reference limitations](https://docs.unity3d.com/2022.3/Documentation/Manual/assembly-definitions-referencing.html), [assembly definitions](https://docs.unity3d.com/2022.3/Documentation/Manual/assembly-definitions.html)
 
 **Railroad Tycoon deliberately uses an existing alternative:** gameplay/Core remain in `Assembly-CSharp`, with Editor tests under `Assets/Editor/Tests/` in the predefined Editor assembly. Follow the existing assembly decision here. For a new project, choose its layout deliberately; this onboarding guide does not call for migrating the current project.
 
@@ -154,7 +154,7 @@ unity test /absolute/path/to/MyGame --mode PlayMode \
   --output /absolute/path/to/results/playmode.xml --timeout 600
 ```
 
-`Unit` is a category you assign with `[Category("Unit")]`; UTF does not supply a universal Unit suite. `--filter` selects names. Check the report's actual selection and executed counts, since matching zero tests establishes no behavior. UTF owns forwarded [test-filtering arguments](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/reference-command-line).
+`Unit` is a category you assign with `[Category("Unit")]`; UTF does not supply a universal Unit suite. `--filter` selects names. Check the report's actual selection and executed counts, since matching zero tests establishes no behavior. UTF owns forwarded [test-filtering arguments](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/reference-command-line).
 
 Batch execution loads Unity and may compile or import assets. Run against a closed project or a separate checkout: concurrent Editors should not share one project directory and Library. A hidden Editor still uses CPU and memory.
 
@@ -169,7 +169,7 @@ For machines without Unity CLI, a direct Editor command is:
   -logFile /absolute/path/to/results/editor.log
 ```
 
-Let `-runTests` finish and write results; adding `-quit` can terminate execution prematurely. Avoid `-nographics` for checks that need rendering. Keep direct Editor exit-code handling separate from the CLI wrapper's contract. [UTF command-line reference](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/reference-command-line)
+Let `-runTests` finish and write results; adding `-quit` can terminate execution prematurely. Avoid `-nographics` for checks that need rendering. Keep direct Editor exit-code handling separate from the CLI wrapper's contract. [UTF command-line reference](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/reference-command-line)
 
 Editor PlayMode testing is what `unity test --mode PlayMode` requests. Built-player testing is a separate route through the Test Runner's player controls or UTF's supported BuildTarget selection. The installed CLI's `--mode` help lists EditMode and PlayMode; do not substitute a build target there.
 
@@ -292,10 +292,10 @@ Borrow Railroad Tycoon's explicit ownership, controlled simulations, fixture cle
 
 ## Sources and version context
 
-Reviewed on **21 October 2026**, against project Unity **6000.7.0b4**, Test Framework **1.9.0**, Pipeline **0.7.0-exp.1**, and installed Unity CLI **1.0.0-beta.13**. Public Unity sources above include the 6000.6 manual and versioned UTF API pages. Use documentation and command schemas matching the installed version for exact support. Project versions remain owned by `ProjectVersion.txt`, the package manifest, and the resolved lock file.
+Reviewed on **21 October 2026**, upstream, against project Unity **6000.7.0b4**, Test Framework **1.9.0**, Pipeline **0.7.0-exp.1**, and installed Unity CLI **1.0.0-beta.13** — **not re-reviewed on 2022.3**; public Unity sources below now point at the 2022.3 manual, and version-sensitive claims should be checked against the installed version. Project versions remain owned by `ProjectVersion.txt`, the package manifest, and the resolved lock file.
 
-- [Unity testing introduction](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction) — framework concepts and documentation entry point.
+- [Unity testing introduction](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction) — framework concepts and documentation entry point.
 - [Unity CLI reference](https://docs.unity.com/en-us/unity-cli/unity-cli-reference) and local `unity test --help` — wrapper commands and supported options.
-- [UTF command-line reference](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/test-framework-introduction/reference-command-line) — direct Editor arguments and filtering.
+- [UTF command-line reference](https://docs.unity3d.com/2022.3/Documentation/Manual/programming-environment/test-framework-introduction/reference-command-line) — direct Editor arguments and filtering.
 - [NUnit documentation](https://docs.nunit.org/articles/nunit/intro.html) — attributes and assertions; use APIs supported by the NUnit bundled with the installed UTF.
 - Project Testing Guide, test inventory, mirror runner, and agent runner — operational procedures and examples.

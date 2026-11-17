@@ -1,0 +1,53 @@
+using System.Collections;
+using UnityEngine;
+
+    #ROOTNAMESPACEBEGIN#
+/// <summary>Runs one cancellable operation while enabled. Starting another cancels the previous one.</summary>
+public sealed class #SCRIPTNAME# : MonoBehaviour
+{
+    [Tooltip("Seconds the sample operation waits. Replace the wait with the real work.")]
+    [SerializeField, Min(0f)] private float _delaySeconds = 1f;
+
+    private Coroutine _operationHandle;
+
+    private void OnEnable()
+    {
+        StartOperation();
+    }
+
+    private void OnDisable()
+    {
+        CancelOperation();
+    }
+
+    public void StartOperation()
+    {
+        CancelOperation();
+        _operationHandle = StartCoroutine(OperationCo());
+    }
+
+    public void CancelOperation()
+    {
+        if (_operationHandle == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_operationHandle);
+        _operationHandle = null;
+    }
+
+    private IEnumerator OperationCo()
+    {
+        yield return new WaitForSeconds(_delaySeconds);
+
+        // The object may have been destroyed or disabled while waiting.
+        if (this == null || !isActiveAndEnabled)
+        {
+            yield break;
+        }
+
+        // Continue with the work that must follow the wait.
+    }
+}
+#ROOTNAMESPACEEND#
