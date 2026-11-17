@@ -1,5 +1,17 @@
 # Unity starter conventions and audits
 
+> **Fork note.** This is `MUDV587/unity-code-style-guide`, a fork of
+> `krogh-jacobsen/unity-code-style-guide` with a restyled naming standard: `_camelCase` private/internal
+> fields, `s_camelCase` private/internal statics (incl. static readonly), PascalCase constants at any
+> accessibility, PascalCase public/protected fields — and two lines:
+>
+> | Branch | Targets |
+> |---|---|
+> | `Unity6000` | Unity 6, tracks upstream (`main` mirrors upstream; style-rename layer only) |
+> | `Unity2022` | Unity 2022.3 LTS (coroutines, `UxmlFactory`/`UxmlTraits`, no runtime data binding, NGO 1.x, `#if UNITY_6000_0_OR_NEWER`) + the restyled standard |
+>
+> Sync from upstream via `scripts/sync-upstream.ps1`. The naming fork is intentional and permanent.
+
 A selectable kit of Unity C# conventions, project setup and review instructions, script templates,
 import presets, and strategy scene templates. This repository contains documentation and resources;
 it is not a Unity project. Adapt stylistic preferences to your team and keep the policy,
