@@ -32,7 +32,7 @@ fixes. Initial cases remain attached to the initial sources; corrective results 
 | Corrective behavioral decisions | Passed | 16 cases across two new fresh sessions; valid and defective examples for all eight reader findings |
 | Checklist rendering regression | Passed | Local validator first rejected six detached row sections; after repair all topic Markdown checks pass, plus five positive/negative parser tests |
 | Full repository and required .NET gates | Passed | `python3 -B -u AuditInstructions/Tools/validate_all.py --require-dotnet` with host access: 84 Markdown files, 538 local links/anchors, 75 unique GUIDs, seven topic validators, 14 workflow tests, 22 CI fixture projects, installation/four negative probes and real .NET style gates |
-| Real Roslyn naming intersections | Passed | Upstream: `python3 -B -u AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py` with SDK 10.0.302 — good fixture 0 diagnostics; bad fixture six expected IDE1006 diagnostics. **The fork re-verified this** with the updated `.editorconfig` and rewritten fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302): good fixture 0, bad fixture 6 at lines 1, 2, 5, 6, 7, 8 — naming rules hold |
+| Real Roslyn naming intersections | Passed | Upstream: `python3 -B -u AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py` with SDK 10.0.302 — good fixture 0 diagnostics; bad fixture six expected IDE1006 diagnostics. **The fork re-verified this** with the updated `.editorconfig` and rewritten fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302): good fixture 0, bad fixture 7 at lines 1, 2, 5, 6, 7, 8, 12 (local constants now counted too; fork's Bad fixture also declares one) — naming rules hold |
 | Replay archive integrity and source freshness | Passed | 54 unique case IDs, complete input/response/grade sets, false project-write authorization, both snapshots hash-verified; corrected snapshot matches current guide/tool sources |
 | Final whitespace | Passed | `git diff --check` after recording results |
 | Unity/runtime/device/network behavior | Not verified | Fictional decision evidence only; no target Editor, Unity tests, player, device or network-simulation run |
@@ -639,7 +639,7 @@ Not verified: the post-fix document was not re-run through a third dry-run. Core
 |---|---|---|
 | Broken links | Fixed | 89 found; 88 rewritten by a layout mapping (old file location to new), 1 prose list edited by hand |
 | Repository validator | Passed | 67 Markdown files, 430 local links/anchors, 75 unique GUIDs, 6 folder validators |
-| Naming checker | Passed | `AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py`: 0 diagnostics on Good, 6 on Bad (expected) — fork re-verified with the updated checker/fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302: same results) |
+| Naming checker | Passed | `AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py`: 0 diagnostics on Good, 7 on Bad (expected) — fork re-verified with the updated checker/fixtures (hand-run `dotnet format --diagnostics IDE1006`, SDK 10.0.302: Good 0, Bad 7 at lines 1, 2, 5, 6, 7, 8, 12) |
 | Project untouched | Passed | Railroad Tycoon status hash `97bbb1bf4278` unchanged |
 
 Not verified: raw GitHub URLs in five install guides (they resolve after the push). Pre-existing stale text outside the split: the README copy table still lists `SetupInstructions/`,
