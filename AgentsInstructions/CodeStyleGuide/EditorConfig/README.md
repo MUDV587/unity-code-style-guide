@@ -17,7 +17,7 @@ in `dotnet build`/CI rather than only as IDE suggestions. Unity compilation does
 Roslyn IDE naming diagnostics, and setting a naming severity alone does not make every build enforce
 it. If CI enforcement is selected, install a compatible analyzer/formatter runner, and verify
 representative intersections. Use
-`python3 CodeStyleGuide/Tools~/check_naming.py` in this kit checkout for good/bad fixtures against the installed
+`python3 AgentsInstructions/CodeStyleGuide/Tools~/check_naming.py` in this kit checkout for good/bad fixtures against the installed
 .NET SDK's Roslyn through `dotnet format`; record its version in [Validation](../../../Validation.md).
 This is separate from Unity CLI compilation/testing, which verifies Unity code and dependencies.
 

@@ -6,4 +6,10 @@ public sealed class Bad
     private static int WrongStatic;
     private const int wrongConstant = 1;
     public int wrongProperty => WrongInstance + WrongStatic + wrongConstant + Lookup.wrongLookup;
+
+    public int Compute()
+    {
+        const int wrongLocalConstant = 1;
+        return WrongInstance + wrongLocalConstant;
+    }
 }
