@@ -8,7 +8,7 @@
 > | Branch | Targets |
 > |---|---|
 > | `Unity6000` | Unity 6, tracks upstream (`main` mirrors upstream; style-rename layer only) |
-> | `Unity2022` (this branch) | Unity 2022.3 LTS (coroutines, `UxmlFactory`/`UxmlTraits`, no runtime data binding, NGO 1.x, `#if UNITY_6000_0_OR_NEWER`) + the restyled standard |
+> | `Unity2022` | Unity 2022.3 LTS (coroutines, `UxmlFactory`/`UxmlTraits`, no runtime data binding, NGO 1.x, `#if UNITY_6000_0_OR_NEWER`) + the restyled standard |
 >
 > Sync from upstream via `scripts/sync-upstream.ps1`. The naming fork is intentional and permanent.
 

@@ -7,10 +7,11 @@ follow [Maintaining this repository](#maintaining-this-repository); a target pro
 
 ## Working rules
 
-- This fork line targets **Unity 2022.3 LTS** (the `Unity2022` branch). Unity 6-only APIs (`Awaitable`,
-  `[UxmlElement]`, runtime data binding, `[AutoStaticsCleanup]`, `Unity.Scripting.LifecycleManagement`,
-  URP Render Graph) do not exist here — do not introduce them. The Unity 6 line of this fork lives on
-  the `Unity6000` branch.
+- This is a fork of `krogh-jacobsen/unity-code-style-guide` with a restyled naming standard (`_camelCase`
+  fields, `s_camelCase` statics, PascalCase constants, IDE1006 warning). Two lines: `Unity6000` tracks
+  Unity 6 (`Awaitable`, `[UxmlElement]`, URP Render Graph are available there); `Unity2022` tracks
+  Unity 2022.3 LTS (coroutines, `UxmlFactory`/`UxmlTraits`, no runtime data binding). Select the line
+  matching the target Editor — do not introduce APIs from one line into the other.
 - Before the first owned C# change, read [the style policy](AgentsInstructions/CodeStyleGuide/UnityStyleGuide.md).
   Use `_camelCase` private/internal instance fields, PascalCase constants at any accessibility,
   `s_camelCase` private/internal statics (including static readonly), Allman braces, explicit `private`,
